@@ -105,7 +105,7 @@ void WS2812Driver::show() {
     // rmt_write_items的wait_tx_done参数为true会等待传输完成
 }
 
-void WS2812Driver::rainbow(uint16_t wait) {
+void WS2812Driver::rainbow(uint32_t wait) {
     for (uint16_t j = 0; j < 256; j++) {
         for (uint16_t i = 0; i < ledCount; i++) {
             // 生成彩虹颜色

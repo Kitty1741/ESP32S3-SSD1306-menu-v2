@@ -78,7 +78,7 @@ bool clearWS2812(gpio_num_t pin, uint16_t ledCount) {
     return driveWS2812(pin, ledCount, 0, 0, 0);
 }
 
-void rainbowWS2812(gpio_num_t pin, uint16_t ledCount, uint16_t durationMs) {
+void rainbowWS2812(gpio_num_t pin, uint16_t ledCount, uint32_t durationMs) {
     Serial.println("开始彩虹效果演示...");
     
     unsigned long startTime = millis();

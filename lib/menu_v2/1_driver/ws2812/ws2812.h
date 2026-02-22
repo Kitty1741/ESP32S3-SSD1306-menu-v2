@@ -48,7 +48,7 @@ bool clearWS2812(gpio_num_t pin, uint16_t ledCount);
  * @param ledCount LED数量
  * @param durationMs 演示时长（毫秒，默认5000ms）
  */
-void rainbowWS2812(gpio_num_t pin, uint16_t ledCount, uint16_t durationMs);
+void rainbowWS2812(gpio_num_t pin, uint16_t ledCount, uint32_t durationMs);
 
 #ifdef __cplusplus
 }
@@ -127,7 +127,7 @@ public:
      * @brief 测试彩虹效果
      * @param wait 每个颜色之间的延迟（毫秒）
      */
-    void rainbow(uint16_t wait = 10);
+    void rainbow(uint32_t wait = 10);
     
     /**
      * @brief 将色相转换为RGB颜色（静态公共方法）

@@ -28,7 +28,7 @@ ws2812/
 ### 1. 包含头文件
 
 ```cpp
-#include <lib/menu_v2/1_driver/ws2812/ws2812.h>
+#include "ws2812.h"
 ```
 
 ### 2. 使用C函数接口（简单）
