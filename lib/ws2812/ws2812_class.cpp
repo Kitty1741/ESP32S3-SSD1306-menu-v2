@@ -1,5 +1,5 @@
 #include "ws2812.h"
-#include "ws2812.hpp"
+#include "ws2812_class.hpp"
 #include "ws2812_config.h"
 
 #if ENABLE_CPP_CLASS == 1

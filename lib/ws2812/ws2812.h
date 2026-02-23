@@ -5,7 +5,7 @@
 #include "ws2812_config.h"
 
 #ifdef __cplusplus
-#include "ws2812.hpp"
+#include "ws2812_class.hpp"
 extern "C" {
 #endif
 
