@@ -7,6 +7,5 @@ void setup() {
 }
 
 void loop() {
-    ws2812 LED(48,1);
-    LED.test(); // 更新显示
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
