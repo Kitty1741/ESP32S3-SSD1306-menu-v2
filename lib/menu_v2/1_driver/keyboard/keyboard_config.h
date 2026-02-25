@@ -1,7 +1,8 @@
 #ifndef __KEYBOARD_CONFIG_H__
 #define __KEYBOARD_CONFIG_H__
 
-#define ENABLE_UART_SCAN 1  // 启用串口扫描模拟键盘功能
+// 启用串口扫描模拟键盘功能
+#define ENABLE_UART_SCAN 1  
 
 //键位配置
 #define   GPIO_KEY_UP       35

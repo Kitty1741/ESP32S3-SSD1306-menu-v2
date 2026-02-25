@@ -22,8 +22,6 @@ class Keyboard{
 
 extern Keyboard keyboard; // 声明一个全局键盘对象
 
-//初始化函数
-void initKeyboardTimer();
-void initKeyboard();
+
 
 #endif // __KEYBOARD_H__

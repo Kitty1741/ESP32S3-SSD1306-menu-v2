@@ -3,6 +3,10 @@
 
 #include "keyboard/keyboard.h"
 
+//初始化函数
+void initKeyboardTimer();
+void initKeyboard();
+
 //该层初始化函数清单
 #define INIT_LIST_1 \
     initKeyboard(); \
