@@ -5,7 +5,7 @@
 #include "keyboard_types.h"
 
 //初始化函数
-void KeyboardInit();
+void initKeyboard();
 
 // 键盘扫描函数 
 KEY scanKeyValue();
