@@ -1,4 +1,7 @@
-#include <Arduino.h>
+#include <string.h>
+#include <math.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "driver/rmt.h"
 #include "driver/gpio.h"
@@ -140,27 +143,27 @@ void ws2812_test(int pin, int led_count) {
     
         ws2812_set_color(0, r, g, b);
         ws2812_show();
-        delay(10);
+        vTaskDelay(10);
     }
 
 
-    ws2812_set_color(0, 255, 0, 0);ws2812_show();delay(500);
-    ws2812_set_color(0, 64, 0, 0); ws2812_show();delay(500);
-    ws2812_set_color(0, 0, 255, 0);ws2812_show();delay(500);
-    ws2812_set_color(0, 0, 64, 0); ws2812_show();delay(500);
-    ws2812_set_color(0, 0, 0, 255);ws2812_show();delay(500);
-    ws2812_set_color(0, 0, 0, 64); ws2812_show();delay(500);
+    ws2812_set_color(0, 255, 0, 0);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0, 64, 0, 0); ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0, 0, 255, 0);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0, 0, 64, 0); ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0, 0, 0, 255);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0, 0, 0, 64); ws2812_show();vTaskDelay(500);
 
-    ws2812_set_color(0,255,255,0  );ws2812_show();delay(500);
-    ws2812_set_color(0,64 ,64 ,0  );ws2812_show();delay(500);
-    ws2812_set_color(0,0  ,255,255);ws2812_show();delay(500);
-    ws2812_set_color(0,0  ,64 ,64 );ws2812_show();delay(500);
-    ws2812_set_color(0,255,0  ,255);ws2812_show();delay(500);
-    ws2812_set_color(0,64 ,0  ,64 );ws2812_show();delay(500);
+    ws2812_set_color(0,255,255,0  );ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,64 ,64 ,0  );ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,0  ,255,255);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,0  ,64 ,64 );ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,255,0  ,255);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,64 ,0  ,64 );ws2812_show();vTaskDelay(500);
 
-    ws2812_set_color(0,255,255,255);ws2812_show();delay(500);
-    ws2812_set_color(0,64 ,64 ,64 );ws2812_show();delay(500);
-    ws2812_set_color(0,16 ,16 ,16 );ws2812_show();delay(500);
-    ws2812_set_color(0,0  ,0  ,0  );ws2812_show();delay(500);
+    ws2812_set_color(0,255,255,255);ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,64 ,64 ,64 );ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,16 ,16 ,16 );ws2812_show();vTaskDelay(500);
+    ws2812_set_color(0,0  ,0  ,0  );ws2812_show();vTaskDelay(500);
 }
 #endif //WS2812_TEST
