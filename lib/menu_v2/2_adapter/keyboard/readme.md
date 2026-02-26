@@ -4,8 +4,9 @@
               L如果读到"释放"标志 -> 发送到队列
 
 所以键盘有两种用法
-第一种就是典中典的轮询，没啥好说的
+第一种就是典中典的轮询，没啥好说的，适合实时性最高的场景
 第二种是简单用法：等待直到收到队列信息，然后执行对应操作，阻塞线程但是逻辑简单
+菜单内部默认用第二种方式
 
 
 API
@@ -14,7 +15,7 @@ API
 Keyboard.waitQueueEvent(); // 等待直到按键释放，然后返回键值
 Keyboard.getKey(); //仅得到按键掩码  
 Keyboard.getKeyEvent(); // 得到按键掩码和事件掩码
-Keyboard.ifKeyEvent(KeyEvent event); // 返回bool，确认现在某按键是否按下
+Keyboard.ifKeyEvent(KeyEvent event); // 返回bool，确认事件是否发生
 Keyboard.getPressTime();   // 获取按键按下时间，单位 毫秒
 
 
