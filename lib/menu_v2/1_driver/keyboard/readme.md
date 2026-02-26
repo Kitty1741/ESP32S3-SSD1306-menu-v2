@@ -1,38 +1,28 @@
  >>>>PLAN<<<<
 这里有一个键盘驱动程序。
-键盘会定时扫描，采集键值
-也可以直接从串口发送数字来操作菜单 用于调试
-可以用以下API调用键盘
-```cpp
-Keyboard.getKey();  //读取键盘，得到键值
-Keyboard.getPressTime();  // 读取记录的按下时间
-```
+可以通过API扫描键盘，返回的是掩码
 
-枚举定义如下
-```cpp
-enum KEY{
-    KEY_NONE,
-    KEY_UP,
-    KEY_DOWN,
-    KEY_LEFT,
-    KEY_RIGHT,
-    KEY_A,
-    KEY_B,
-    KEY_X,
-    KEY_Y,
-    KEY_F1,
-    KEY_F2
-}KEY;
-```
 
-文件
-keyboard_config.h   配置文件
-keyboard.cpp        定义对外的函数/类
-keyboard.h          声明对外函数/类
-keyboard_scan.cpp   键盘扫描函数
-keyboard_scan.h     声明键盘扫描函数
-keyboard_types.h    声明键盘枚举
-readme.md           说明文档
+```cpp
+//键盘输出的枚举，每个按键对应一个位，按下时该位为1，否则为0
+typedef enum{
+    KEY_NONE = 0,
+    KEY_UP   = 1 << 0,
+    KEY_DOWN = 1 << 1,
+    KEY_LEFT = 1 << 2,
+    KEY_RIGHT= 1 << 3,
+    KEY_A    = 1 << 4,
+    KEY_B    = 1 << 5,
+    KEY_X    = 1 << 6,
+    KEY_Y    = 1 << 7,
+    KEY_F1   = 1 << 8,
+    KEY_F2   = 1 << 9,
+} KeyValue;
+typedef uint16_t KeyMask; // 定义一个新的类型 KEY_MASK，表示按键掩码
+
+// 键盘扫描函数 
+KeyMask scanKeyValue();
+```
 
 默认键位
 按键1	GPIO35	上

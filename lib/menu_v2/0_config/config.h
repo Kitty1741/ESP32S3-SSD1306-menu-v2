@@ -7,9 +7,6 @@
 
 //全局设置
 
-//长按时间阈值（ms）
-#define LONG_PRESS_THRESHOLD 400
-
 //该层初始化函数清单
 #define INIT_LIST_0 \
     ;
