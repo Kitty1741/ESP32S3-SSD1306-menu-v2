@@ -12,7 +12,7 @@
 API
 ```cpp
 //不用创建对象，直接调用的API如下
-Keyboard.waitQueueEvent(); // 等待直到按键释放，然后返回键值
+Keyboard.waitQueueEvent(uint32_t delay = portMAX_DELAY); // 等待直到按键释放，然后返回键值，可手动改等待时间上限
 Keyboard.getKey(); //仅得到按键掩码  
 Keyboard.getKeyEvent(); // 得到按键掩码和事件掩码
 Keyboard.ifKeyEvent(KeyEvent event); // 返回bool，确认事件是否发生

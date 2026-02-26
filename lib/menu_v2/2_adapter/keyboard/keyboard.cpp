@@ -40,12 +40,12 @@ KeyEventMask KeyboardClass::getKeyEvent(){
 //判断按键事件是否发生
 bool KeyboardClass::ifKeyEvent(KeyEvent event){
     __DEBUG_1("Keyboard::ifKeyEvent()\n")
-    return (this -> key & event) != 0;
+    return (this -> key) & event;
 }
 
 // 从队列获取按键事件，阻塞
-KeyEventMask KeyboardClass::waitQueueEvent(){
+KeyEventMask KeyboardClass::waitQueueEvent( uint32_t delay ){
     KeyEventMask event;
-    xQueueReceive(keyboardEventQueue,&event,portMAX_DELAY);
+    xQueueReceive(keyboardEventQueue,&event,delay);
     return event;
 }

@@ -15,7 +15,7 @@ static StackType_t keyboardTaskStack[4096]; // 定义任务栈
 static StaticTask_t keyboardTaskBuffer; // 定义任务控制块
 
 QueueHandle_t keyboardEventQueue; // 定义一个队列句柄，用于发送按键事件
-uint8_t keyboardEventQueueStorage[16 * sizeof(KeyEventMask)]; // 定义队列缓冲区
+uint8_t keyboardEventQueueStorage[1 * sizeof(KeyEventMask)]; // 定义队列缓冲区
 StaticQueue_t keyboardEventQueueBuffer; // 定义一个静态队列控制块
 
 
@@ -23,7 +23,7 @@ StaticQueue_t keyboardEventQueueBuffer; // 定义一个静态队列控制块
 void initKeyboardEventQueue(){ // 初始化按键事件队列
     __DEBUG_1("initKeyboardEventQueue()\n")
     keyboardEventQueue = xQueueCreateStatic(
-        16,                 // 队列长度
+        1,                 // 队列长度
         sizeof(KeyEventMask), // 每个元素大小
         keyboardEventQueueStorage, // 队列缓冲区
         &keyboardEventQueueBuffer  // 队列控制块
@@ -55,7 +55,7 @@ void refreshKey(void* no_param){
             if( lastKey ){ //如果上次有按键按下但这次没有，说明发生了释放事件，此时发送事件到队列
                 Keyboard.key |= KEY_EVENT_UNPRESS;
                 KeyEventMask event = Keyboard.key | lastKey;// 防止释放时不发送按键/长按信息
-                xQueueSend(keyboardEventQueue, &event, 0); //发送事件到队列，缓冲区满直接丢
+                xQueueOverwrite(keyboardEventQueue, &event); //发送事件到队列，缓冲区满直接丢旧数据
             }
         }
 

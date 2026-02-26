@@ -26,7 +26,7 @@ class KeyboardClass{
         KeyEventMask getKeyEvent();                     // 获取当前按键事件掩码
         bool ifKeyEvent(KeyEvent event);                // 根据掩码判断是否发生了指定的按键事件
 
-        KeyEventMask waitQueueEvent();                  // 从队列获取按键事件，阻塞
+        KeyEventMask waitQueueEvent(uint32_t delay = portMAX_DELAY);                  // 从队列获取按键事件，阻塞
 };
 
 extern KeyboardClass& Keyboard; // 声明一个唯一的全局键盘对象
