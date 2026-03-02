@@ -15,13 +15,13 @@ SPI MOSI	GPIO13	主机输出
 SPI 备用/DC	GPIO14	如需控制屏幕数据/命令脚，可用此脚
 
 按键1	GPIO35	上
-按键2	GPIO36	下
-按键3	GPIO37	左/取消
+按键2	GPIO36	左/取消
+按键3	GPIO37	下
 按键4	GPIO38	右/进入
-按键5	GPIO39	功能键A
-按键6	GPIO40	功能键B
-按键7	GPIO41	功能键X
-按键8	GPIO42	功能键Y
+按键5	GPIO39	功能键X
+按键6	GPIO40	功能键A
+按键7	GPIO41	功能键Y
+按键8	GPIO42	功能键B
 按键9	GPIO1	功能键+/引出备用
 按键10	GPIO2	功能键-/引出备用
 蜂鸣器	GPIO47	R-2R电路链接，用于输出叠加方波
