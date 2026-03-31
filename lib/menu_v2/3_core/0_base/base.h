@@ -2,7 +2,7 @@
 #define __BASE_H__
 
 #include <Arduino.h>
-
+#include <vector>
 
 /**
  * @brief 菜单项类
@@ -11,17 +11,18 @@
  */
 class menuItem_t{
 private:
-    String name;                        // 选项名称
-    std::function<int32_t()> bind;      // 运行时调用函数
+    std::function<int32_t()> bind;          // 运行时调用函数
+    String name;                            // 选项名称
 
 public:
-    menuItem_t(String name="Noname");    // 构造函数
-    ~menuItem_t();      // 析构函数
+    menuItem_t(String name="Noname");       // 构造函数
+    ~menuItem_t();                          // 析构函数
 
-    void setName(String name);     // 设置选项名称
-    int32_t run() ;       // 执行操作，返回返回值
+    inline String getName() const;          // 读名字
+    void changeName(String name);           // 改名
+    int32_t run();                          // 执行操作，返回返回值
 
-    friend class menu_t; // 友元类--菜单类
+    friend class menu_t;                    // 友元类--菜单类
 };
 
 
@@ -46,5 +47,25 @@ public:
         }; \
     } while(0); // 确保执行一次，同时防止空绑定
 
+
+// 菜单类，用于管理一个菜单目录
+class menu_t{
+private:
+    String name;                        // 菜单名字
+    std::vector<menuItem_t> itemTable;  // 选项数组，存的选项对象
+
+public:
+    menu_t(String name="Noname");       // 构造函数
+    ~menu_t();                          // 析构函数
+
+    inline String getName();                // 读名字
+    void changeName(String name);           // 改名
+    std::vector<menuItem_t> getItemTable() const; // 读选项数组
+    std::vector<String> getNameTable() const;     // 读选项名字数组
+    uint32_t cursor = 0;                    // 光标
+    int32_t runItem();                      // 执行光标对应选项的行为
+    void insertItem(menuItem_t item);       // 插入新选项到指定选项后
+    void deleteItem(menuItem_t item);       // 删除选项
+};
 
 #endif // __BASE_H__
