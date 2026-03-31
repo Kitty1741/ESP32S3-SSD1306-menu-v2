@@ -6,7 +6,7 @@
 #include <U8g2lib.h>
 #include <Wire.h>
 
-U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE ,/*SCL*/9,/*SDA*/8);
+U8G2_SSD1315_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE ,/*SCL*/9,/*SDA*/8);
 
 void setup(){
     Serial.begin(115200);
@@ -24,6 +24,7 @@ void setup(){
     menuInit(); //菜单系统初始化
 }
 
+String str1;
 KeyEventMask key;
 char str[100];
 void test(){
@@ -37,17 +38,20 @@ void test(){
     else if( key & KEY_EVENT_LONG_LONG_PRESS ) u8g2.drawUTF8(4,2,"超级长按\n ");
     else if( key & KEY_EVENT_SHORT_PRESS ) u8g2.drawUTF8(4,2,"短按\n ");
     if( key & KEY_EVENT_UNPRESS )u8g2.drawUTF8(80,2,"松开\n ");
-    if( key == KEY_NONE ) u8g2.drawUTF8(4,14,"无按键按下\n ");//这里往下的纵坐标都是14.
-    if( key & KEY_EVENT_UP ) u8g2.drawUTF8(4,14,"UP\n ");
-    if( key & KEY_EVENT_DOWN ) u8g2.drawUTF8(4,14,"DOWN\n ");
-    if( key & KEY_EVENT_LEFT ) u8g2.drawUTF8(4,14,"LEFT\n ");
-    if( key & KEY_EVENT_RIGHT ) u8g2.drawUTF8(4,14,"RIGHT\n ");
-    if( key & KEY_EVENT_A ) u8g2.drawUTF8(4,14,"A\n ");
-    if( key & KEY_EVENT_B ) u8g2.drawUTF8(4,14,"B\n ");
-    if( key & KEY_EVENT_X ) u8g2.drawUTF8(4,14,"X\n ");
-    if( key & KEY_EVENT_Y ) u8g2.drawUTF8(4,14,"Y\n ");
-    if( key & KEY_EVENT_F1 ) u8g2.drawUTF8(4,14,"F1\n ");
-    if( key & KEY_EVENT_F2 ) u8g2.drawUTF8(4,14,"F2\n ");
+
+    str1 = "";
+    if( key == KEY_NONE )      str1 += "无按键按下";
+    if( key & KEY_EVENT_UP )   str1 += "UP  ";
+    if( key & KEY_EVENT_DOWN ) str1 += "DOWN  ";
+    if( key & KEY_EVENT_LEFT ) str1 += "LEFT  ";
+    if( key & KEY_EVENT_RIGHT )str1 += "RIGHT  ";
+    if( key & KEY_EVENT_A )    str1 += "A  ";
+    if( key & KEY_EVENT_B )    str1 += "B  ";
+    if( key & KEY_EVENT_X )    str1 += "X  ";
+    if( key & KEY_EVENT_Y )    str1 += "Y  ";
+    if( key & KEY_EVENT_F1 )   str1 += "F1  ";
+    if( key & KEY_EVENT_F2 )   str1 += "F2  ";
+    u8g2.drawUTF8(4,14,str1.c_str());
     u8g2.sendBuffer();
 }
 

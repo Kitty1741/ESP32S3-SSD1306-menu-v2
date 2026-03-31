@@ -29,14 +29,18 @@ void initKeyboard(){
 KeyMask scanKeyboard(){
     __DEBUG_1("scanKeyboard()\n")
     KeyMask result = 0;
-
-    // 批量操作连续IO(直接读寄存器)
-    uint32_t HighGPIO = ~REG_READ(GPIO_IN1_REG);  // GPIO 32-63
-    result = (HighGPIO >> 3) & 0xFF; // 取 GPIO 35-42
     
     // 单独操作离散IO
-    if(digitalRead(GPIO_KEY_F1) == LOW) result |= KEY_F1;
-    if(digitalRead(GPIO_KEY_F2) == LOW) result |= KEY_F2;
+    if(digitalRead(GPIO_KEY_F1   ) == LOW) result |= KEY_F1;
+    if(digitalRead(GPIO_KEY_F2   ) == LOW) result |= KEY_F2;
+    if(digitalRead(GPIO_KEY_UP   ) == LOW) result |= KEY_UP;
+    if(digitalRead(GPIO_KEY_DOWN ) == LOW) result |= KEY_DOWN;
+    if(digitalRead(GPIO_KEY_LEFT ) == LOW) result |= KEY_LEFT;
+    if(digitalRead(GPIO_KEY_RIGHT) == LOW) result |= KEY_RIGHT;
+    if(digitalRead(GPIO_KEY_A    ) == LOW) result |= KEY_A;
+    if(digitalRead(GPIO_KEY_B    ) == LOW) result |= KEY_B;
+    if(digitalRead(GPIO_KEY_X    ) == LOW) result |= KEY_X;
+    if(digitalRead(GPIO_KEY_Y    ) == LOW) result |= KEY_Y;
 
     return result;
 }
