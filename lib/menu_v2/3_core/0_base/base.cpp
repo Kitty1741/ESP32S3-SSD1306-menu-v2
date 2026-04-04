@@ -1,9 +1,7 @@
 // base.cpp
 #include <arduino.h>
-#include <random>
 
 #include <0_config/config.h>
-#include <2_adapter/adapter.h>
 
 #include "base.h"
 
@@ -56,3 +54,6 @@ std::vector<String> menu_t::getNameTable() const{
 int32_t menu_t::runItem(){
     return this->itemTable[this->cursor].run();
 }                         // 执行光标对应选项的行为
+uint32_t menu_t::size(){
+    return this->itemTable.size();
+}       // 返回菜单长度

@@ -27,7 +27,7 @@ void initKeyboardEventQueue(){ // 初始化按键事件队列
         sizeof(KeyEventMask), // 每个元素大小
         keyboardEventQueueStorage, // 队列缓冲区
         &keyboardEventQueueBuffer  // 队列控制块
-    ); 
+    );
 }
 
 

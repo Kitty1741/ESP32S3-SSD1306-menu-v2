@@ -71,5 +71,5 @@ class KeyboardClass{
 
 extern KeyboardClass Keyboard;
 
-QueueHandle_t keyboardEventQueue; // 事件队列句柄，按键释放/长按/双击(还没做)等事件会发送到这个队列
+QueueHandle_t keyboardEventQueue; // freeRTOS事件队列句柄，按键释放事件会发送到这个队列
 ```
