@@ -6,5 +6,7 @@ class menu;       // 菜单目录
 ```cpp
 std::string menu::getItemName(uint32_t index) const;// 读指定选项名字
        void menu::runItem();                        // 执行光标对应选项的行为
-   uint32_t menu::size() const;                     // 返回菜单长度                 
+   uint32_t menu::size() const;                     // 返回菜单长度        
+       void menu::up()                              // 光标上移
+       void menu::down()                            // 光标下移         
 ```

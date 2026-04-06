@@ -9,10 +9,10 @@
 
 #define IF_DEBUG_0 0//允许调试不同层
 #define IF_DEBUG_1 0
-#define IF_DEBUG_2 1
-#define IF_DEBUG_3 1
-#define IF_DEBUG_4 1
-#define IF_DEBUG_5 1
+#define IF_DEBUG_2 0
+#define IF_DEBUG_3 0
+#define IF_DEBUG_4 0
+#define IF_DEBUG_5 0
 #define IF_DEBUG_A 1//another
 
 #endif // IF_DEBUG

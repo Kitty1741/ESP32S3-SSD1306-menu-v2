@@ -20,7 +20,7 @@ public:
     std::string name;            // 显示名字
     std::function<void()> run;   // 行为函数，选中调用这个
     menuItem(const std::string& name, std::function<void()> func = nullptr)
-        : name(name), run(func) {}
+        : name(name), run(func){}
 };
 
 /**
@@ -36,11 +36,15 @@ public:
     std::string name;                      // 菜单名字
     std::vector<menuItem> itemTable;      // 选项数组，存的选项对象
     
-    uint32_t size() const;                                    // 得到长度
-    std::string getItemName(uint32_t index) const;                 // 读指定选项名字
+    uint32_t size() const;                              // 得到长度
+    std::string getItemName(uint32_t index) const;      // 读指定选项名字
     void runItem();                                     // 执行光标对应选项的行为
-    void insertItem(uint32_t index,menuItem item);    // 插入新选项到指定选项后
-    void deleteItem(uint32_t index);                   // 删除选项
+    void up();                                          // 光标上移
+    void down();                                        // 光标下移
+    void insertItem(uint32_t index,menuItem item);      // 插入新选项到指定选项后
+    void deleteItem(uint32_t index);                    // 删除选项
 };
+
+#include "base_macro.h" // 辅助工厂宏
 
 #endif // __BASE_H__
