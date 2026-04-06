@@ -1,3 +1,4 @@
 [wokwi]
 version = 1
-firmware = '.pio\build\rymcu-esp32-s3-devkitc-1\firmware.bin'
+firmware = '.pio\build\rymcu-esp32-s3-devkitc-1\firmware.bin' 
+elf      = '.pio\build\rymcu-esp32-s3-devkitc-1\firmware.elf'

@@ -1,59 +1,22 @@
-// base.cpp
+// base_t.cpp
 #include <arduino.h>
+#include <string>
 
 #include <0_config/config.h>
 
 #include "base.h"
 
-
-// 菜单项
-menuItem_t::menuItem_t(String name){
-    this->name = name;
-}    // 构造函数
-menuItem_t::~menuItem_t(){}      // 析构函数
-
-String menuItem_t::getName() const{
-    return this->name;
-}         // 读名字
-void menuItem_t::changeName(String name){
-    this->name = name;
-}   // 改名
-int32_t menuItem_t::run(){ // 菜单行为函数
-    return this->bind();
+// 读指定选项名字
+std::string menu::getItemName(uint32_t index) const{
+    return this->itemTable[index].name;
 }
 
-
-// 菜单
-menu_t::menu_t(String name){
-    this->name = name;
-}    // 构造函数
-menu_t::~menu_t(){}      // 析构函数
-
-String menu_t::getName(){
-    return this->name;
-}         // 读名字
-void menu_t::changeName(String name){
-    this->name = name;
-}   // 改名
-
-// 读选项数组
-std::vector<menuItem_t> menu_t::getItemTable() const{
-    return this->itemTable;
-} 
-
-// 读名字数组
-std::vector<String> menu_t::getNameTable() const{
-    uint32_t size = this->itemTable.size();     // 确认名字数组长度
-    std::vector<String> nameTable;              // 初始化数组
-    for(uint32_t i=0;i<size;i++){               // 遍历拷贝
-        nameTable.push_back(this->itemTable[i].name);
-    }
-    return nameTable;
-}
-
-int32_t menu_t::runItem(){
-    return this->itemTable[this->cursor].run();
-}                         // 执行光标对应选项的行为
-uint32_t menu_t::size(){
+// 执行光标对应选项的行为
+void menu::runItem(){
+    if(this->itemTable[this->cursor].run != nullptr)
+    this->itemTable[this->cursor].run();
+}     
+// 返回菜单长度                    
+uint32_t menu::size() const{
     return this->itemTable.size();
-}       // 返回菜单长度
+}      

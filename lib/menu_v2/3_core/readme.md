@@ -13,6 +13,5 @@
  - 对用户公开
 
 ##### 全局变量
-```cpp
-menu_t* currentMenu = nullptr;          // 当前菜单指针，给显示任务看的
+```cpp* currentMenu = nullptr;          // 当前菜单指针，给显示任务看的
 ```
