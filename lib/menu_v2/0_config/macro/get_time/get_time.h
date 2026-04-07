@@ -6,5 +6,9 @@
 //设置获取时间的函数别名，方便移植
 #define get_time_us() esp_timer_get_time()      
 #define get_time_ms() get_time_us()/1000 
+#define get_time_s()  get_time_us()/1000000 
+
+// 设置freertos延迟别名
+#define rtos_ms(ms) ms/portTICK_PERIOD_MS
 
 #endif

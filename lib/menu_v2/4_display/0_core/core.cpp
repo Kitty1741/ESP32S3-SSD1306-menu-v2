@@ -36,26 +36,26 @@ void initU8g2Setting(){
 }
 
 // 打印名字
-void printNameBar(std::string name){
+void printNameBar(const std::string& name){
     __DEBUG_4("printNameBar()\n")
     u8g2.drawFrame(0, 0, 128, 16);
     u8g2.drawUTF8 (2, 4, name.c_str());
 }
 
 // 打印Item列表，后续添加动画
-void printMenuItems(menu* menu){
+void printMenuItems(const menu& menu){
     __DEBUG_4("printMenuItems()\n")
     uint32_t view;                   // 渲染开始位置
-    uint32_t size = menu->size();
+    uint32_t size = menu.size();
 
     //通过光标得出合适的屏幕位置
     if( size < 4 ){
         view = 0;
     }else{
-        menu->cursor == 0         ? view = 0 :
-        menu->cursor == size -2   ? view = menu->cursor -2 :
-        menu->cursor == size -1   ? view = menu->cursor -3 :
-        /*default*/view = menu->cursor -1;
+        menu.cursor == 0         ? view = 0 :
+        menu.cursor == size -2   ? view = menu.cursor -2 :
+        menu.cursor == size -1   ? view = menu.cursor -3 :
+        /*default*/view = menu.cursor -1;
     }
 
     // 打印选项和光标
@@ -64,9 +64,9 @@ void printMenuItems(menu* menu){
         u8g2.drawUTF8 (                 // 选项
             4, 
             17 + 12*i, 
-            menu->getItemName(view + i).c_str()
+            menu.getItemName(view + i).c_str()
         );
-        if( view + i == menu->cursor ){ // 光标
+        if( view + i == menu.cursor ){ // 光标
             u8g2.drawBox(0,16+12*i,2,12);
         }
     }
@@ -77,6 +77,6 @@ void printMenu(menu* menu){
     if(menu==nullptr||menu==NULL)return;
     else{
         printNameBar(menu->name);
-        printMenuItems(menu);
+        printMenuItems(*menu);
     }
 }

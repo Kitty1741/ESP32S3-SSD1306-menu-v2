@@ -8,12 +8,22 @@
  * @param __VA_ARGS__ std::vector<menuItem>类型数组，填你的选项-函数清单
  * 
 */
-#define enterMenu(name,...) eM_(name,__VA_ARGS__)
-#define eM_(name,...)           \
+#define newMenu(name,...) nM_(name,__VA_ARGS__)
+#define nM_(name,...)           \
 [](){                           \
     menuLoop({                  \
         name,__VA_ARGS__        \
     });                         \
+}                               \
+
+/**
+ * @brief 将已有菜单作为子菜单执行的宏函数
+ * @param menu 变量名，填子菜单的变量名
+*/
+#define enterMenu(menu) eM_(menu)
+#define eM_(menu)               \
+[&](){                          \
+    menuLoop(menu);             \
 }                               \
 
 #endif

@@ -6,6 +6,6 @@
 
 //该层初始化函数清单
 #define INIT_LIST_4 \
-    initU8g2Setting();  \
+    initDisplayTask();  \
 
 #endif // __DISPLAY_H__

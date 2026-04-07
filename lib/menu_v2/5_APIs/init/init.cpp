@@ -5,7 +5,7 @@
 #include "4_display/display.h"
 #include "init.h"
 
-void menuInit(){
+void menuInit(const menu& mainMenu){
     __DEBUG_A("menuInit()\n")
 
     //调用初始化函数清单
@@ -14,4 +14,7 @@ void menuInit(){
     INIT_LIST_2
     INIT_LIST_3
     INIT_LIST_4
+
+    // 特殊的带参函数
+    initMenuCore(mainMenu);
 }
