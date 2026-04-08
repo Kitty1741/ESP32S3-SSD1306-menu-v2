@@ -43,8 +43,11 @@ void menuLoop(void* menuToRun){
     uint32_t& cursor = curMenu->cursor;         // 菜单光标引用
 
     while(1){//                 -----------LOOP-----------
-        sendDisplayData(curMenu);               // 显示刷新
-        if( xQueueReceive( keyboardEventQueue , &key , rtos_ms(500) ) ){ // 捕捉按键队列
+        if(!sendDisplayData(curMenu)){  // 显示刷新
+            vTaskDelay(rtos_ms(50));    // 队列满的错误处理
+            continue;
+        }               
+        if( xQueueReceive( keyboardEventQueue , &key , rtos_ms(50) ) ){ // 捕捉按键队列
             
             if( key & KEY_EVENT_UP )   curMenu->up();                   // 光标上移
             if( key & KEY_EVENT_DOWN ) curMenu->down();                 // 光标下移

@@ -56,9 +56,9 @@
 #endif
 
 #if (IF_DEBUG_A == 1)
-#define __DEBUG_A(DATA) Serial.print(DATA);
+#define __DEBUG_A(...) Serial.print(__VA_ARGS__);
 #else
-#define __DEBUG_A(DATA)
+#define __DEBUG_A(...)
 #endif
 
 #endif
