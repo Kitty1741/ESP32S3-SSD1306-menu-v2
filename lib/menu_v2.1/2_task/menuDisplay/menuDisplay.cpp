@@ -17,12 +17,20 @@ const menu* mainMenuPtr;            // 根部菜单，用来检测是否在根�
 void initMenuDisplayTask(const menu& mainMenu){
     __DEBUG_2("initMenuDisplayTask()\n")
     mainMenuPtr = &mainMenu;
+
+    // 确保任务优先级比loop高，这样显示不会轻易撞车
+    uint8_t priority;
+    TaskHandle_t loopTaskHandle = xTaskGetHandle("loopTask");
+    if(loopTaskHandle != NULL){
+        priority = uxTaskPriorityGet( loopTaskHandle ) +1; 
+    } else priority=1;     // 依旧防空
+
     xTaskCreate(
         menuDisplayTask,
         "menuDisplayTask",
         8192,
         (void*)&mainMenu,
-        1,
+        priority,
         &menuDisplayTaskHandle
     );
 }
@@ -50,10 +58,4 @@ void menuDisplayTask(void* menuPtr){
         // 菜单打印
         printMenu(&Menu);
     }
-}
-
-// 用于在lambda表达式中进入菜单循环
-void menuLoop(menu Menu){
-    __DEBUG_2("menuLoop()\n")
-    menuDisplayTask(&Menu);
 }

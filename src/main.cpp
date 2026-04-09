@@ -26,5 +26,5 @@ void setup(){
 }
 
 void loop(){
-    delay(1111);
+    vTaskDelay(portMAX_DELAY);
 }

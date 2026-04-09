@@ -46,15 +46,30 @@ void printNameBar(const std::string& name){
     u8g2.drawUTF8 (2, 3, name.c_str());
 }
 
+// 让now的值逐渐逼近目标值的函数，用于动画选项光标逼近实际位置，不支持无符号变量
+template<typename T>
+void approachTarget(T& now,T target){
+
+    T diff = target - now;  // 目标与当前值的差值
+    if( abs(diff) == 1){    // 如果只相差1，则直接赋相等，防止后面diff/2=0时now值不变
+        now = target;
+    }else{
+        now += diff/2;              // 否则用二分法逼近目标值
+    }
+}
+
 static int32_t itemBias  = 0;                   // 用来计算选项整体显示偏移(向下为正),单位像素
 static int32_t itemTargetBias = 0;              // 选项目标偏移量(向下为正),运行时不断二分趋近该值
-const static uint8_t itemBeginCoor = 16;        // 选项渲染起始纵坐标(u8g2坐标系)，偏移以此为基准
+const static uint32_t itemBeginCoor = 16;        // 选项渲染起始纵坐标(u8g2坐标系)，偏移以此为基准
 
-static int8_t cursorBias = 0;                   // 光标相对初始屏幕位置的偏移(向下为正)
-static int8_t cursorTargetBias = 0;             // 光标目标屏幕位置偏移量(向下为正)
-const static uint8_t cursorBeginCoor = 16;      // 光标初始屏幕位置在选项1上
+static int32_t cursorBias = 0;                   // 光标相对初始屏幕位置的偏移(向下为正)
+static int32_t cursorTargetBias = 0;             // 光标目标屏幕位置偏移量(向下为正)
+static int32_t cursorWidth = 0;                 // 光标宽度
+static int32_t cursorTargetWidth = 0;           // 光标目标宽度
+const static uint32_t cursorBeginCoorY = 16;     // 光标初始屏幕位置(在选项1上)
+const static uint32_t cursorBeginCoorX = 0;      // 光标初始横坐标为0
 
-const static uint8_t itemHeight = 12;           // 选项高度，推荐12，不能小于12
+const static uint32_t itemHeight = 12;           // 选项高度，推荐12，不能小于12
 
 // 打印Item列表，后续添加动画
 void printMenuItems(const menu& menu){
@@ -79,12 +94,12 @@ void printMenuItems(const menu& menu){
         itemTargetBias = -(menu.cursor -1) * itemHeight;    // 列表位置随光标位置改变
         cursorTargetBias = 1 * itemHeight;                  // 光标在位置2
     }
+    cursorTargetWidth = u8g2.getUTF8Width(menu.itemTable[menu.cursor].name.c_str()) + 8;
 
     // 菜单和光标向目标位置逼近
-    if(cursorTargetBias-cursorBias==1|cursorTargetBias-cursorBias==-1){cursorBias=cursorTargetBias;}
-    cursorBias += (cursorTargetBias - cursorBias)/2;      // 实际偏移量计算
-    if(itemTargetBias-itemBias==1|itemTargetBias-itemBias==-1){itemBias=itemTargetBias;}
-    itemBias += (itemTargetBias - itemBias)/2;            // 实际偏移量计算
+    approachTarget(itemBias  ,  itemTargetBias);
+    approachTarget(cursorBias,  cursorTargetBias);
+    approachTarget(cursorWidth, cursorTargetWidth);
 
     // 打印
     for(uint8_t i=0;i<size;++i){    // 打印选项
@@ -95,9 +110,9 @@ void printMenuItems(const menu& menu){
         );
     }
     u8g2.drawBox(                   // 打印光标
-        0,
-        cursorBeginCoor + cursorBias -2,
-        128,
+        cursorBeginCoorX,
+        cursorBeginCoorY + cursorBias -2,
+        cursorWidth,
         itemHeight +1/*这个打印需要宽一点来包住选项*/
     );
 }
