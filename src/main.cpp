@@ -1,8 +1,5 @@
 #include <Arduino.h>
-#include <../lib/menu_v2/menuv2.h>
-#include <../lib/ws2812/ws2812.h>
-
-#include "test.cpp"
+#include <menuv2.h>
 
 menu mainMenu(
     "主菜单",{
@@ -16,7 +13,7 @@ menu mainMenu(
         }
         )},
     {"选项1"},
-    {"时间",getTimeTest}
+    {"时间"}
     }
 );
 
@@ -24,9 +21,10 @@ void setup(){
     Serial.begin(115200);
     __DEBUG_A("setup()\n")
 
+    //test
     menuInit(mainMenu); //菜单系统初始化
 }
 
 void loop(){
-    vTaskDelay(portMAX_DELAY);
+    delay(1111);
 }
