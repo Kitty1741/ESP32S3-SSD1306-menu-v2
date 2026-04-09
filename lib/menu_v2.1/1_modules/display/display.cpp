@@ -61,10 +61,10 @@ int32_t max(A a,B b){
     return a;
 }
 
-constexpr static uint32_t itemHeight = _DISPLAY_ITEM_HEIGHT;           // 选项高度，推荐12
-constexpr static uint32_t titleHeight = _DISPLAY_TITLE_HEIGHT;         // 标题高度，推荐16
-constexpr static uint32_t maxItems =                                   // 最大同时出现选项数量
-    (_DISPLAY_MAX_HEIGHT - titleHeight + itemHeight - 1) / itemHeight + 1;
+const static uint32_t itemHeight = _DISPLAY_ITEM_HEIGHT;           // 选项高度，推荐12
+const static uint32_t titleHeight = _DISPLAY_TITLE_HEIGHT;         // 标题高度，推荐16
+const static uint32_t maxItems =                                   // 最大同时出现选项数量
+    (u8g2.getHeight() - titleHeight + itemHeight - 1) / itemHeight + 1;
 
 static int32_t itemBias;                       // 用来计算选项整体显示偏移(向下为正),单位像素
 static int32_t itemTargetBias;                  // 选项目标偏移量(向下为正),运行时不断二分趋近该值
@@ -89,8 +89,8 @@ void printMenuItems(const menu& menu){
     itemTargetBias = -menu.cursor*itemHeight + itemHeight;   // 默认位置在显示的第二个选项上
     if(itemTargetBias >= 0||size < maxItems){                // 如果第一个显示的选项在起始位置下 或者选项很少
         itemTargetBias = 0;                                  // 就设置第一项对齐顶部
-    }else if(itemTargetBias + size*itemHeight < _DISPLAY_MAX_HEIGHT - cursorBeginCoorY){ // 如果最后一个显示的选项后有空隙
-        itemTargetBias = -size*itemHeight + (_DISPLAY_MAX_HEIGHT - cursorBeginCoorY);    // 就把选项下放到没有空隙
+    }else if(itemTargetBias + size*itemHeight < u8g2.getHeight() - cursorBeginCoorY){ // 如果最后一个显示的选项后有空隙
+        itemTargetBias = -size*itemHeight + (u8g2.getHeight() - cursorBeginCoorY);    // 就把选项下放到没有空隙
     }
     cursorTargetBias = itemTargetBias + menu.cursor*itemHeight;
 
@@ -131,7 +131,7 @@ void printMenu(menu* Menu){
     u8g2.clearBuffer();
     u8g2.setClipWindow(0, 0, 128, titleHeight -1); 
     printNameBar(Menu->name);
-    u8g2.setClipWindow(0, titleHeight -1, _DISPLAY_MAX_WIDTH, _DISPLAY_MAX_HEIGHT); 
+    u8g2.setClipWindow(0, titleHeight -1, u8g2.getHeight(), u8g2.getHeight()); 
     printMenuItems(*Menu);
     u8g2.sendBuffer();
 }

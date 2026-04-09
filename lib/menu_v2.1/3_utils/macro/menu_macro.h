@@ -2,7 +2,7 @@
 #define _3_MENU_MACRO_H__
 
 // 用于兼容无名对象，可以快速创建菜单使用
-void menuLoop(menu Menu){
+inline void menuLoop(menu Menu){
     __DEBUG_3("menuLoop()\n")
     menuDisplayTask(&Menu);
 }

@@ -3,5 +3,6 @@
 
 #include "./init/init.h"
 #include "./macro/macro.h"
+#include "./inner_menu/menu.h"
 
 #endif

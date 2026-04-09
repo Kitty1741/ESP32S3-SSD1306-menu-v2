@@ -57,7 +57,9 @@ void menuDisplayTask(void* menuPtr){
                 if(&Menu != mainMenuPtr)break; // 检测是否退无可退，防止任务意外结束
             } 
             if( key & (KEY_EVENT_RIGHT| KEY_EVENT_A) ){                 // 执行run()
+                resetU8g2Setting(); // 初始化显示设置
                 Menu.runItem();
+                resetU8g2Setting(); // 防止有人改显示设置
             }
         }
 

@@ -16,20 +16,7 @@ menu mainMenu(
             {"abcd"}
             }
         )},
-        {"子菜单3",newMenu(
-            "子菜单2",{
-            {"a"},
-            {"ab"},
-            {"abc"},
-            {"abcd"},
-            {"abcde"},
-            {"abcdef"},
-            {"abcdefg"},
-            {"abcdefgh"},
-            {"abcdefghi"},
-            {"abcdefghij"}
-            }
-        )},
+        {"innerMenu",enterMenu(innerMenu)},
         {"选项5"}
         }
         )},
