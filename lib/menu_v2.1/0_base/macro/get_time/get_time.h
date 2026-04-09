@@ -9,6 +9,6 @@
 #define get_time_s()  get_time_us()/1000000 
 
 // 设置freertos延迟别名
-#define rtos_ms(ms) ms/portTICK_PERIOD_MS
+#define rtos_ms(ms) pdMS_TO_TICKS(ms)
 
 #endif

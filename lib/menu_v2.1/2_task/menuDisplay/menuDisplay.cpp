@@ -9,12 +9,14 @@
 
 #include "menuDisplay.h"
 
+uint32_t displayInterval = 1000/_DISPLAY_FPS; // 显示间隔，单位ms
+
 extern QueueHandle_t keyboardEventQueue; // 键盘事件队列
 TaskHandle_t menuDisplayTaskHandle = NULL; // 菜单显示任务句柄
-const menu* mainMenuPtr;            // 根部菜单，用来检测是否在根部退出，防止rtos任务意外结束
+static menu* mainMenuPtr;            // 根部菜单，用来检测是否在根部退出，防止rtos任务意外结束
 
 // 初始化菜单显示任务
-void initMenuDisplayTask(const menu& mainMenu){
+void initMenuDisplayTask(menu& mainMenu){
     __DEBUG_2("initMenuDisplayTask()\n")
     mainMenuPtr = &mainMenu;
 
@@ -29,7 +31,7 @@ void initMenuDisplayTask(const menu& mainMenu){
         menuDisplayTask,
         "menuDisplayTask",
         8192,
-        (void*)&mainMenu,
+        mainMenuPtr,
         priority,
         &menuDisplayTaskHandle
     );
@@ -41,10 +43,14 @@ void menuDisplayTask(void* menuPtr){
     menu& Menu = *(menu*)menuPtr;
     KeyEvent key = 0;                       // 缓存按键事件用
     uint32_t& cursor = Menu.cursor;         // 菜单光标引用
+    TickType_t lastWakeTime;                // 上次唤醒时间，用于控制帧数
 
+    // 按键响应
     while(1){
-        // 按键响应
-        if( xQueueReceive( keyboardEventQueue , &key , rtos_ms(0) ) ){ // 捕捉按键队列
+        lastWakeTime = xTaskGetTickCount(); // 开始计时
+
+        // 捕捉按键队列
+        if( xQueueReceive( keyboardEventQueue , &key , rtos_ms(0) ) ){
             if( key & KEY_EVENT_UP )   Menu.up();                   // 光标上移
             if( key & KEY_EVENT_DOWN ) Menu.down();                 // 光标下移
             if( key & (KEY_EVENT_LEFT | KEY_EVENT_B) ){                 // 返回
@@ -57,5 +63,8 @@ void menuDisplayTask(void* menuPtr){
 
         // 菜单打印
         printMenu(&Menu);
+
+        // 延时
+        vTaskDelayUntil(&lastWakeTime,rtos_ms(displayInterval));
     }
 }

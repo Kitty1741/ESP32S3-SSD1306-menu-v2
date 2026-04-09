@@ -37,39 +37,46 @@ void initU8g2Setting(){
     resetU8g2Setting();
 }
 
-
-
-// 打印名字条
-void printNameBar(const std::string& name){
-    __DEBUG_1("printNameBar()\n")
-    u8g2.drawFrame(0, 0, 128, 15);
-    u8g2.drawUTF8 (2, 3, name.c_str());
-}
-
 // 让now的值逐渐逼近目标值的函数，用于动画选项光标逼近实际位置，不支持无符号变量
 template<typename T>
 void approachTarget(T& now,T target){
 
     T diff = target - now;  // 目标与当前值的差值
-    if( abs(diff) == 1){    // 如果只相差1，则直接赋相等，防止后面diff/2=0时now值不变
+    if( std::abs(diff) <= 1){    // 如果只相差1，则直接赋相等，防止后面diff/2=0时now值不变
         now = target;
     }else{
         now += diff/2;              // 否则用二分法逼近目标值
     }
 }
 
-static int32_t itemBias  = 0;                   // 用来计算选项整体显示偏移(向下为正),单位像素
-static int32_t itemTargetBias = 0;              // 选项目标偏移量(向下为正),运行时不断二分趋近该值
-const static uint32_t itemBeginCoor = 16;        // 选项渲染起始纵坐标(u8g2坐标系)，偏移以此为基准
+// 官方的傻逼std::max和min没法用于两个不同类型的量，所以我自己写了一个
+template<typename A,typename B>
+int32_t min(A a,B b){
+    if(a<b)return a;
+    return b;
+}
+template<typename A,typename B>
+int32_t max(A a,B b){
+    if(a<b)return b;
+    return a;
+}
 
-static int32_t cursorBias = 0;                   // 光标相对初始屏幕位置的偏移(向下为正)
-static int32_t cursorTargetBias = 0;             // 光标目标屏幕位置偏移量(向下为正)
-static int32_t cursorWidth = 0;                 // 光标宽度
-static int32_t cursorTargetWidth = 0;           // 光标目标宽度
-const static uint32_t cursorBeginCoorY = 16;     // 光标初始屏幕位置(在选项1上)
-const static uint32_t cursorBeginCoorX = 0;      // 光标初始横坐标为0
+constexpr static uint32_t itemHeight = _DISPLAY_ITEM_HEIGHT;           // 选项高度，推荐12
+constexpr static uint32_t titleHeight = _DISPLAY_TITLE_HEIGHT;         // 标题高度，推荐16
+constexpr static uint32_t maxItems =                                   // 最大同时出现选项数量
+    (_DISPLAY_MAX_HEIGHT - titleHeight + itemHeight - 1) / itemHeight + 1;
 
-const static uint32_t itemHeight = 12;           // 选项高度，推荐12，不能小于12
+static int32_t itemBias;                       // 用来计算选项整体显示偏移(向下为正),单位像素
+static int32_t itemTargetBias;                  // 选项目标偏移量(向下为正),运行时不断二分趋近该值
+const static uint32_t itemBeginCoor = titleHeight;      // 选项渲染起始纵坐标(u8g2坐标系)，偏移以此为基准
+
+static int32_t cursorBias;                       // 光标相对初始屏幕位置的偏移(向下为正)
+static int32_t cursorTargetBias;                 // 光标目标屏幕位置偏移量(向下为正)
+static int32_t cursorWidth;                      // 光标宽度
+static int32_t cursorTargetWidth;                // 光标目标宽度
+const static uint32_t cursorBeginCoorY = titleHeight;   // 光标初始屏幕位置(在选项1上)
+const static uint32_t cursorBeginCoorX = 0;             // 光标初始横坐标为0
+
 
 // 打印Item列表，后续添加动画
 void printMenuItems(const menu& menu){
@@ -77,35 +84,28 @@ void printMenuItems(const menu& menu){
     
     // 处理光标和菜单的目标位置
     uint32_t size = menu.size();
-    if(size < 4){                           // 短菜单固定选项位置
-        itemTargetBias = 0;                                 // item无偏移
-        cursorTargetBias = menu.cursor * itemHeight;        // 光标在位置1
+    cursorTargetWidth = u8g2.getUTF8Width(  // 计算光标宽度uint32_t size = menu.size();
+        menu.itemTable[menu.cursor].name.c_str()) + 8;  
+    itemTargetBias = -menu.cursor*itemHeight + itemHeight;   // 默认位置在显示的第二个选项上
+    if(itemTargetBias >= 0||size < maxItems){                // 如果第一个显示的选项在起始位置下 或者选项很少
+        itemTargetBias = 0;                                  // 就设置第一项对齐顶部
+    }else if(itemTargetBias + size*itemHeight < _DISPLAY_MAX_HEIGHT - cursorBeginCoorY){ // 如果最后一个显示的选项后有空隙
+        itemTargetBias = -size*itemHeight + (_DISPLAY_MAX_HEIGHT - cursorBeginCoorY);    // 就把选项下放到没有空隙
     }
-    else if(menu.cursor == 0){                  // 光标在第一个位置
-        itemTargetBias = 0;                                 // item无偏移
-        cursorTargetBias = 0;                               // 光标在位置1
-    }else if(menu.cursor == size -2){           // 光标在倒数第二个位置
-        itemTargetBias = -(menu.cursor -2) * itemHeight;    // item偏移到最后
-        cursorTargetBias = 2 * itemHeight;                  // 光标在位置3
-    }else if(menu.cursor == size -1){           // 光标在最后一个位置
-        itemTargetBias = -(menu.cursor -3) * itemHeight;    // item偏移到最后
-        cursorTargetBias = 3 * itemHeight;                  // 光标在位置4
-    }else{                                      // 默认情况
-        itemTargetBias = -(menu.cursor -1) * itemHeight;    // 列表位置随光标位置改变
-        cursorTargetBias = 1 * itemHeight;                  // 光标在位置2
-    }
-    cursorTargetWidth = u8g2.getUTF8Width(menu.itemTable[menu.cursor].name.c_str()) + 8;
+    cursorTargetBias = itemTargetBias + menu.cursor*itemHeight;
 
-    // 菜单和光标向目标位置逼近
+    // 菜单和光标向目标值逼近
     approachTarget(itemBias  ,  itemTargetBias);
     approachTarget(cursorBias,  cursorTargetBias);
     approachTarget(cursorWidth, cursorTargetWidth);
 
-    // 打印
-    for(uint8_t i=0;i<size;++i){    // 打印选项
+    // 打印             
+    for(uint32_t i=0;i<size;++i){    // 打印选项
+        if(itemBeginCoor + itemBias + i*itemHeight < itemBeginCoor - itemHeight)continue;   // 跳过无效项
+        if(itemBeginCoor + itemBias + i*itemHeight > itemBeginCoor + (maxItems-1)*itemHeight)continue; // 跳过无效项
         u8g2.drawUTF8(
             4,
-            itemBeginCoor + itemBias + i*itemHeight,
+            itemBeginCoor + itemBias + i*itemHeight,    // 每项的纵坐标
             menu.itemTable[i].name.c_str()
         );
     }
@@ -117,14 +117,21 @@ void printMenuItems(const menu& menu){
     );
 }
 
+// 打印名字条
+void printNameBar(const std::string& name){
+    __DEBUG_1("printNameBar()\n")
+    u8g2.drawFrame(0, 0, 128, titleHeight -1);
+    u8g2.drawUTF8 (2,3,name.c_str());
+}
+
 // 打印一整个菜单的函数
 void printMenu(menu* Menu){
     __DEBUG_1("printMenu()\n")
     if(!Menu){return;}          // 防空指针
     u8g2.clearBuffer();
-    u8g2.setClipWindow(0, 0, 128, 15); 
+    u8g2.setClipWindow(0, 0, 128, titleHeight -1); 
     printNameBar(Menu->name);
-    u8g2.setClipWindow(0, 15, 128, 64); 
+    u8g2.setClipWindow(0, titleHeight -1, _DISPLAY_MAX_WIDTH, _DISPLAY_MAX_HEIGHT); 
     printMenuItems(*Menu);
     u8g2.sendBuffer();
 }

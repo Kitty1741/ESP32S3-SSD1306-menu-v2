@@ -9,13 +9,13 @@
 
 // 读指定选项名字
 std::string menu::getItemName(uint32_t index) const{
-    __DEBUG_3("menu::getItemName()\n")
+    __DEBUG_1("menu::getItemName()\n")
     return this->itemTable[index].name;
 }
 
 // 执行光标对应选项的行为
 void menu::runItem(){
-    __DEBUG_3("menu::runItem()\n")
+    __DEBUG_1("menu::runItem()\n")
     menuItem* item = &this->itemTable[this->cursor];
     if(item->run != nullptr)
     item->run();
@@ -23,7 +23,7 @@ void menu::runItem(){
 
 // 返回菜单长度                    
 uint32_t menu::size() const{
-    __DEBUG_3("menu::size()\n")
+    __DEBUG_1("menu::size()\n")
     return this->itemTable.size();
 }      
 void menu::up(){// 光标上移

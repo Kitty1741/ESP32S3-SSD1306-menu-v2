@@ -7,7 +7,7 @@
 //该层初始化内容清单(init宏使用)
 // 参数为根部菜单，用于初始化，类型为const menu&
 #define INIT_LIST_2(mainMenu) \
-    initKeyboardTask();\
-    initMenuDisplayTask(mainMenu);
+    initKeyboardTask();         \
+    initMenuDisplayTask(mainMenu);\
 
 #endif

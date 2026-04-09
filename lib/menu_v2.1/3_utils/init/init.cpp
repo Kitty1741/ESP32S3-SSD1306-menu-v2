@@ -3,7 +3,7 @@
 #include "2_task/task.h"
 #include "init.h"
 
-void menuInit(const menu& mainMenu){
+void menuInit(menu& mainMenu){
     __DEBUG_3("menuInit()\n")
 
     //执行初始化清单

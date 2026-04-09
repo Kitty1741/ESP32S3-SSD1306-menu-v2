@@ -7,8 +7,29 @@ menu mainMenu(
         "子菜单1",{
         {"选项1"},
         {"选项2"},
-        {"选项3"},
-        {"选项4"},
+        {"子菜单2",newMenu(
+            "子菜单2",{
+            {"-"},
+            {"-----"},
+            {"---"},
+            {"------------"},
+            {"abcd"}
+            }
+        )},
+        {"子菜单3",newMenu(
+            "子菜单2",{
+            {"a"},
+            {"ab"},
+            {"abc"},
+            {"abcd"},
+            {"abcde"},
+            {"abcdef"},
+            {"abcdefg"},
+            {"abcdefgh"},
+            {"abcdefghi"},
+            {"abcdefghij"}
+            }
+        )},
         {"选项5"}
         }
         )},
@@ -21,7 +42,6 @@ void setup(){
     Serial.begin(115200);
     __DEBUG_A("setup()\n")
 
-    //test
     menuInit(mainMenu); //菜单系统初始化
 }
 
