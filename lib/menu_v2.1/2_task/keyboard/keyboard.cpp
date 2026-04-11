@@ -23,9 +23,9 @@ void refreshKey(void* no_param){
         __DEBUG_2("refreshKey()\n")
 
         KeyEvent lastKey = Keyboard.key & ~KEY_EVENT_UNPRESS;     // 上次是否有按键按下
-        Keyboard.key = scanKeyValue();            //扫描获取按键
 
-        // 检测长按和超长按
+        // 检测按键事件
+        Keyboard.key = scanKeyValue();                      // 扫描获取按键
         if( Keyboard.key != KEY_EVENT_NONE ){
             Keyboard.pressTime += KEYBOARD_SCAN_INTERVAL;   //按键按下时间增加
             if (Keyboard.pressTime <= KEYBOARD_LONG_PRESS_THRESHOLD) {
@@ -33,18 +33,24 @@ void refreshKey(void* no_param){
             } else if (Keyboard.pressTime <= KEYBOARD_LONG_LONG_PRESS_THRESHOLD) {
                 Keyboard.key |= KEY_EVENT_LONG_PRESS;
             } else { 
+                Keyboard.key |= KEY_EVENT_LONG_PRESS;
                 Keyboard.key |= KEY_EVENT_LONG_LONG_PRESS;
+            }
+            if( !lastKey ){              // 如果上次没按按键而这次按了，则是首次按下
+                Keyboard.key |= KEY_EVENT_FIRSTPRESS;
             }
         }else{
             Keyboard.pressTime = 0;
             if( lastKey ){ //如果上次有按键按下但这次没有，说明发生了释放事件，此时发送事件到队列
                 Keyboard.key |= KEY_EVENT_UNPRESS;
-                KeyEvent event = Keyboard.key | lastKey;// 防止释放时不发送按键/长按信息
-                xQueueOverwrite(keyboardEventQueue, &event); //发送事件到队列，缓冲区满直接丢旧数据
             }
         }
 
-        vTaskDelay(KEYBOARD_SCAN_INTERVAL / portTICK_PERIOD_MS); //延时
+        if( Keyboard.key & ~0x03ff ){   // 特殊标志位但凡有动静就发
+            xQueueSend(keyboardEventQueue, &Keyboard.key, portMAX_DELAY);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(KEYBOARD_SCAN_INTERVAL)); //延时
     }
 }
 

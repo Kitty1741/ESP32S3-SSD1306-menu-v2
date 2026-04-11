@@ -19,11 +19,15 @@ typedef enum {
     KEY_EVENT_F1   = 1 << 8,
     KEY_EVENT_F2   = 1 << 9,
 
-    KEY_EVENT_LONG_PRESS  = 1 << 10,      // 长按事件
-    KEY_EVENT_LONG_LONG_PRESS = 1 << 11, // 超级长按事件
-    KEY_EVENT_SHORT_PRESS = 1 << 12,    // 短按事件
-    KEY_EVENT_UNPRESS = 1 << 13,       // 释放事件
-    KEY_EVENT_DOUBLE_PRESS = 1 << 14, // 双击事件 // 还没做
+    KEY_EVENT_LONG_PRESS  = 1 << 10,       // 长按事件
+    KEY_EVENT_LONG_LONG_PRESS = 1 << 11,  // 超级长按事件
+    KEY_EVENT_SHORT_PRESS = 1 << 12,     // 短按事件
+    KEY_EVENT_UNPRESS = 1 << 13,        // 释放事件
+    KEY_EVENT_FIRSTPRESS = 1 << 14,    // 首次按下事件，在按键按下的第一帧发送
+    KEY_EVENT_DOUBLE_PRESS = 1 << 15, // 双击事件 // 还没做
+
+    KEY_EVENT_BACK  = KEY_EVENT_LEFT  | KEY_EVENT_B,    // 两个按键都能触发该事件
+    KEY_EVENT_ENTER = KEY_EVENT_RIGHT | KEY_EVENT_A,
     
 }KeyEventEnum;
 typedef uint32_t KeyEvent; // 按键事件掩码
