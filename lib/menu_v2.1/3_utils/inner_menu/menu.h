@@ -3,8 +3,6 @@
 
 #include "1_modules/modules.h"
 
-void runSpaceTrash();   // 小游戏
-
 extern menu innerMenu;
 
 #endif

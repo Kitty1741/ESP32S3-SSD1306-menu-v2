@@ -6,6 +6,8 @@
 #include "2_task/task.h"
 #include "3_utils/init/init.h"
 #include "3_utils/macro/macro.h"
+
+#include "inner_items/inner_items.h"
 #include "menu.h"
 
 menu innerMenu(
