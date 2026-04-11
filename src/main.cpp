@@ -1,9 +1,12 @@
 #include <Arduino.h>
 #include <menuv2.h>
 
+#include "imu/imu.h"
+
 menu mainMenu(
     "主菜单",{
     {"innerMenu",enterMenu(innerMenu)},
+    {"imu",enterMenu(imuMenu)},
     }
 );
 

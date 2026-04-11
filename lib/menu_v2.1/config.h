@@ -20,6 +20,7 @@
 #define  GPIO_KEY_F2       2 
 
 // display
+
 // 显示尺寸
 #define  _DISPLAY_TITLE_HEIGHT 17                   // 标题高度，默认17
 #define  _DISPLAY_ITEM_HEIGHT  13                   // 选项高度，默认13

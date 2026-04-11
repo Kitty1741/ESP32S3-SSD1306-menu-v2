@@ -11,7 +11,6 @@
 
 
 // 创建u8g2对象
-#define _U8G2_CREATE U8G2_SSD1306_128X64_NONAME_F_HW_I2C
 _U8G2_CREATE u8g2(                             
         /*rotation*/U8G2_R0,
         /*reset*/ U8X8_PIN_NONE,
