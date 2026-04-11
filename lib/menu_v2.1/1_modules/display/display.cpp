@@ -1,3 +1,7 @@
+#if IF_U8X8_HAVE_2ND_HW_I2C     // u8g2使用第二个IIC控制器
+#define U8X8_HAVE_2ND_HW_I2C
+#endif
+
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include <Wire.h>
@@ -21,7 +25,7 @@ _U8G2_CREATE u8g2(
 // 重置菜单显示设置
 void resetU8g2Setting(){
     __DEBUG_4("resetU8g2Setting()\n")
-    u8g2.setClipWindow(0, 0, 128, 64); // 恢复全屏显示
+    u8g2.setClipWindow(0, 0, u8g2.getDisplayWidth(), u8g2.getDisplayHeight()); // 恢复全屏显示
     u8g2.enableUTF8Print();    // 启用UTF-8支持，用于显示中文
     u8g2.setDrawColor(2);        // xor显示
     u8g2.setFont(_U8G2_ENG_FONT_X12);  // 设置英文字体
@@ -119,8 +123,8 @@ void printMenuItems(const menu& menu){
 // 打印名字条
 void printNameBar(const std::string& name){
     __DEBUG_1("printNameBar()\n")
-    u8g2.drawFrame(0, 0, 128, titleHeight -1);
-    u8g2.drawUTF8 (2,3,name.c_str());
+    u8g2.drawFrame(0, 0, u8g2.getWidth(), titleHeight -1);
+    u8g2.drawUTF8 (2, 3, name.c_str());
 }
 
 // 打印一整个菜单的函数
@@ -128,9 +132,9 @@ void printMenu(menu* Menu){
     __DEBUG_1("printMenu()\n")
     if(!Menu){return;}          // 防空指针
     u8g2.clearBuffer();
-    u8g2.setClipWindow(0, 0, 128, titleHeight -1); 
+    u8g2.setClipWindow(0, 0, u8g2.getWidth(), titleHeight -1); 
     printNameBar(Menu->name);
-    u8g2.setClipWindow(0, titleHeight -1, u8g2.getHeight(), u8g2.getHeight()); 
+    u8g2.setClipWindow(0, titleHeight -1, u8g2.getWidth(), u8g2.getHeight()); 
     printMenuItems(*Menu);
     u8g2.sendBuffer();
 }
