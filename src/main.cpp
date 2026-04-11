@@ -20,7 +20,7 @@ menu mainMenu(
         {"选项5"}
         }
         )},
-    {"选项1"},
+    {"关机",esp_deep_sleep_start},
     {"时间"}
     }
 );
