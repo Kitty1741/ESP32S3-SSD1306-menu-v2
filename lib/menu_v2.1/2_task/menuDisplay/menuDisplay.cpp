@@ -42,26 +42,42 @@ void menuDisplayTask(void* menuPtr){
     __DEBUG_2("menuDisplayTask()\n")
     menu& Menu = *(menu*)menuPtr;
     KeyEvent key = 0;                       // 缓存按键事件用
+    KeyEvent keyBuffer = 0;                 // 用来融合按键事件
     uint32_t& cursor = Menu.cursor;         // 菜单光标引用
-    TickType_t lastWakeTime;                // 上次唤醒时间，用于控制帧数
+    TickType_t lastWakeTime = 0;            // 上次任务唤醒时间，用于控制帧数
+    TickType_t lastLPTime = xTaskGetTickCount(); // 上次响应长按改变菜单位置的时间，用于控制长按改变位置的速度,LP = longPress
+    constexpr TickType_t LPInterval = pdMS_TO_TICKS(LONG_PRESS_ACT_INTERVAL); // 长按响应间隔，单位转换为每tick
 
     // 按键响应
     while(1){
         lastWakeTime = xTaskGetTickCount(); // 开始计时
 
         // 捕捉按键队列
-        if( xQueueReceive( keyboardEventQueue , &key , rtos_ms(0) ) ){
-            if( key & KEY_EVENT_UP )   Menu.up();                   // 光标上移
-            if( key & KEY_EVENT_DOWN ) Menu.down();                 // 光标下移
-            if( key & (KEY_EVENT_LEFT | KEY_EVENT_B) ){                 // 返回
-                if(&Menu != mainMenuPtr)break; // 检测是否退无可退，防止任务意外结束
-            } 
-            if( key & (KEY_EVENT_RIGHT| KEY_EVENT_A) ){                 // 执行run()
-                resetU8g2Setting(); // 初始化显示设置
-                Menu.runItem();
-                resetU8g2Setting(); // 防止有人改显示设置
-            }
+        key = 0;
+        while(xQueueReceive( keyboardEventQueue , &keyBuffer , 0 )){
+            key |= keyBuffer;   // 由于按键实在多，一个个看不过来，所以干脆全融了
         }
+        if(key & KEY_EVENT_LONG_PRESS ){// 如果是长按导致的
+            if(lastLPTime + LPInterval > lastWakeTime){ // 如果时间间隔不够久就不响应
+                goto KEY_ACT_END; 
+            }else{                                      // 间隔够久就响应并刷新间隔
+                lastLPTime = lastWakeTime;
+            }
+        }else if(!(key & KEY_EVENT_FIRSTPRESS)){          // 如果又不是长按又不是第一次按下就滚
+            goto KEY_ACT_END;
+        }
+    
+        if( key & KEY_EVENT_UP )   Menu.up();                   // 光标上移
+        if( key & KEY_EVENT_DOWN ) Menu.down();                 // 光标下移
+        if( key & (KEY_EVENT_BACK) ){                 // 返回
+            if(&Menu != mainMenuPtr)break; // 检测是否退无可退，防止任务意外结束
+        } 
+        if( key & (KEY_EVENT_ENTER) ){                 // 执行run()
+            resetU8g2Setting(); // 初始化显示设置
+            Menu.runItem();
+            resetU8g2Setting(); // 防止有人改显示设置
+        }
+        KEY_ACT_END: // 按键响应结束位置，准备打印和延时
 
         // 菜单打印
         printMenu(&Menu);
