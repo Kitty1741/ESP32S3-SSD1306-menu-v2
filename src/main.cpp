@@ -3,25 +3,7 @@
 
 menu mainMenu(
     "主菜单",{
-    {"子菜单1",newMenu(
-        "子菜单1",{
-        {"选项1"},
-        {"选项2"},
-        {"子菜单2",newMenu(
-            "子菜单2",{
-            {"-"},
-            {"-----"},
-            {"---"},
-            {"------------"},
-            {"abcd"}
-            }
-        )},
-        {"innerMenu",enterMenu(innerMenu)},
-        {"选项5"}
-        }
-        )},
-    {"选项1"},
-    {"时间"}
+    {"innerMenu",enterMenu(innerMenu)},
     }
 );
 
