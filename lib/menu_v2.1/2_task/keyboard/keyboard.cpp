@@ -123,11 +123,11 @@ KeyEvent KeyboardClass::getKey(){
 //判断按键事件是否发生
 bool KeyboardClass::ifKeyEvent(KeyEvent event){
     __DEBUG_1("Keyboard::ifKeyEvent()\n")
-    return (this -> key) & event;
+    return this->key & event == event;
 }
 
 // 从队列获取按键事件，阻塞
-KeyEvent KeyboardClass::waitQueueEvent( uint32_t delay ){
+KeyEvent KeyboardClass::waitEvent( uint32_t delay ){
     KeyEvent event;
     xQueueReceive(keyboardEventQueue,&event,delay);
     return event;

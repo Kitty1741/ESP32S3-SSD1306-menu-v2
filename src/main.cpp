@@ -1,37 +1,57 @@
 #include <Arduino.h>
 #include <menuv2.h>
 
+#include <U8g2lib.h>
+#include <Wire.h>
+
+void test(){
+    u8g2.clearDisplay();
+    u8g2.drawUTF8X2(2,2,"世界你好");
+    u8g2.sendBuffer();
+    while(1){
+        if(Keyboard.getKey()==KEY_EVENT_A)return;
+    }
+}
+
 menu mainMenu(
     "主菜单",{
-    {"子菜单1",newMenu(
-        "子菜单1",{
-        {"选项1"},
-        {"选项2"},
-        {"子菜单2",newMenu(
-            "子菜单2",{
-            {"-"},
-            {"-----"},
-            {"---"},
-            {"------------"},
-            {"abcd"}
+        {"inner_menu",enterMenu(innerMenu)},
+        {"子菜单",newMenu(
+            "子菜单",{
+                {"1--"},
+                {"2------"},
+                {"3----------"},
+                {"4------"},
+                {"5--"},
+                {"6------"},
+                {"7----------"},
+                {"8------"},
+                {"9--"},
+                {"10-----"},
+                {"11---------"},
+                {"12-----"},
+                {"13-"},
+                {"14-----"},
+                {"15---------"},
+                {"16-----"},
             }
         )},
-        {"innerMenu",enterMenu(innerMenu)},
-        {"选项5"}
-        }
-        )},
-    {"关机",esp_deep_sleep_start},
-    {"时间"}
+        {"poweroff",[](){
+            u8g2.clearDisplay();
+            esp_deep_sleep_start();
+        }},
     }
 );
 
+
+
 void setup(){
     Serial.begin(115200);
-    __DEBUG_A("setup()\n")
+    __DEBUG_A("setup()")
 
-    menuInit(mainMenu); //菜单系统初始化
+    menuInit(mainMenu);
 }
 
 void loop(){
-    vTaskDelay(portMAX_DELAY);
+    delay(999999);
 }

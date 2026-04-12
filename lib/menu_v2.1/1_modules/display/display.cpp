@@ -42,15 +42,17 @@ void initU8g2Setting(){
 }
 
 // 让now的值逐渐逼近目标值的函数，用于动画选项光标逼近实际位置，不支持无符号变量
+// 返回值为真则代表已经approach到了target
 template<typename T>
-void approachTarget(T& now,T target){
+bool approachTarget(T& now,T target){
 
     T diff = target - now;  // 目标与当前值的差值
     if( std::abs(diff) <= 1){    // 如果只相差1，则直接赋相等，防止后面diff/2=0时now值不变
         now = target;
-    }else{
-        now += diff/2;              // 否则用二分法逼近目标值
+        return true;
     }
+    now += diff/2;               // 否则用二分法逼近目标值
+    return false;
 }
 
 // 官方的傻逼std::max和min没法用于两个不同类型的量，所以我自己写了一个
@@ -83,8 +85,11 @@ const static uint32_t cursorBeginCoorX = 0;             // 光标初始横坐标
 
 
 // 打印Item列表，后续添加动画
-void printMenuItems(const menu& menu){
+// 返回值为真->光标和目标位置重合->显示任务可以休息了
+bool printMenuItems(const menu& menu){
+    
     __DEBUG_1("printMenuItems()\n")
+    bool ifCompleteDraw = true;   // 返回值
     
     // 处理光标和菜单的目标位置
     uint32_t size = menu.size();
@@ -99,9 +104,9 @@ void printMenuItems(const menu& menu){
     cursorTargetBias = itemTargetBias + menu.cursor*itemHeight;
 
     // 菜单和光标向目标值逼近
-    approachTarget(itemBias  ,  itemTargetBias);
-    approachTarget(cursorBias,  cursorTargetBias);
-    approachTarget(cursorWidth, cursorTargetWidth);
+    ifCompleteDraw &= approachTarget(itemBias  ,  itemTargetBias);
+    ifCompleteDraw &= approachTarget(cursorBias,  cursorTargetBias);
+    ifCompleteDraw &= approachTarget(cursorWidth, cursorTargetWidth);
 
     // 打印             
     for(uint32_t i=0;i<size;++i){    // 打印选项
@@ -119,6 +124,7 @@ void printMenuItems(const menu& menu){
         cursorWidth,
         itemHeight +1/*这个打印需要宽一点来包住选项*/
     );
+    return ifCompleteDraw;
 }
 
 // 打印名字条
@@ -129,13 +135,18 @@ void printNameBar(const std::string& name){
 }
 
 // 打印一整个菜单的函数
-void printMenu(menu* Menu){
+// 返回值为真->光标和目标位置重合->显示任务可以休息了
+bool printMenu(menu* Menu){
     __DEBUG_1("printMenu()\n")
-    if(!Menu){return;}          // 防空指针
+    if(!Menu){return true;}          // 防空指针
+    bool ifCompleteDraw;   // 返回值
+
     u8g2.clearBuffer();
     u8g2.setClipWindow(0, 0, u8g2.getWidth(), titleHeight -1); 
     printNameBar(Menu->name);
     u8g2.setClipWindow(0, titleHeight -1, u8g2.getWidth(), u8g2.getHeight()); 
-    printMenuItems(*Menu);
+    ifCompleteDraw = printMenuItems(*Menu);
     u8g2.sendBuffer();
+
+    return ifCompleteDraw;
 }

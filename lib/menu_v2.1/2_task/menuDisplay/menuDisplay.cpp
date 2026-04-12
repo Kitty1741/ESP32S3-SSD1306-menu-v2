@@ -47,6 +47,7 @@ void menuDisplayTask(void* menuPtr){
     TickType_t lastWakeTime = 0;            // 上次任务唤醒时间，用于控制帧数
     TickType_t lastLPTime = xTaskGetTickCount(); // 上次响应长按改变菜单位置的时间，用于控制长按改变位置的速度,LP = longPress
     constexpr TickType_t LPInterval = pdMS_TO_TICKS(LONG_PRESS_ACT_INTERVAL); // 长按响应间隔，单位转换为每tick
+    bool ifDraw = true;
 
     // 按键响应
     while(1){
@@ -66,9 +67,13 @@ void menuDisplayTask(void* menuPtr){
         }else if(!(key & KEY_EVENT_FIRSTPRESS)){          // 如果又不是长按又不是第一次按下就滚
             goto KEY_ACT_END;
         }
-    
-        if( key & KEY_EVENT_UP )   Menu.up();                   // 光标上移
-        if( key & KEY_EVENT_DOWN ) Menu.down();                 // 光标下移
+        
+        // 能运行到这里代表输入的按键需要被执行
+        // 执行后可能会改变显示，所以设计ifDraw的操作
+        // 当前逻辑：每次按键后允许画，动画结束后不允许画，这样没有操作就不画了
+        ifDraw = true;
+        if( key & KEY_EVENT_UP )   {Menu.up();  }                // 光标上移
+        if( key & KEY_EVENT_DOWN ) {Menu.down();}                 // 光标下移
         if( key & (KEY_EVENT_BACK) ){                 // 返回
             if(&Menu != mainMenuPtr)break; // 检测是否退无可退，防止任务意外结束
         } 
@@ -80,7 +85,10 @@ void menuDisplayTask(void* menuPtr){
         KEY_ACT_END: // 按键响应结束位置，准备打印和延时
 
         // 菜单打印
-        printMenu(&Menu);
+        if(ifDraw)
+            if(printMenu(&Menu)==true){ // 如果动画已经播放完了
+                ifDraw = false; // 下次就不画了
+            }else ifDraw = true;
 
         // 延时
         vTaskDelayUntil(&lastWakeTime,rtos_ms(displayInterval));

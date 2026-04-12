@@ -1,4 +1,9 @@
+
+
 /*
+ * 本文件是对 U8g2 库中 SpaceTrash.cpp 的 menu_v2 移植版本。
+ * 移植工作由 AI / user1741 完成。
+
 
   SpaceTrash.cpp
 
