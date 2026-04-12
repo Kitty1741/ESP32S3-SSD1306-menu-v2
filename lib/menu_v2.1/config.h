@@ -20,11 +20,9 @@
 #define  GPIO_KEY_F2       2 
 
 // display
-// IIC总线配置
-#define  IF_U8X8_HAVE_2ND_HW_I2C 1                  // 配置u8g2使用第二个IIC控制器，防止打架
 // 显示尺寸
-#define  _DISPLAY_TITLE_HEIGHT 17                   // 标题高度，默认17
-#define  _DISPLAY_ITEM_HEIGHT  13                   // 选项高度，默认13
+#define  _DISPLAY_TITLE_HEIGHT 15                   // 标题高度，默认17，最小15
+#define  _DISPLAY_ITEM_HEIGHT  12                   // 选项高度，默认13，最小12
 // u8g2构造函数选择
 #define  _U8G2_CREATE U8G2_SSD1306_128X64_NONAME_F_HW_I2C // U8G2_SSD1306_128X64_NONAME_F_4W_HW_SPI(rotation, cs, dc [, reset])
 #define  _U8G2_SCL 9

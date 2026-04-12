@@ -1,7 +1,3 @@
-#if IF_U8X8_HAVE_2ND_HW_I2C     // u8g2使用第二个IIC控制器
-#define U8X8_HAVE_2ND_HW_I2C
-#endif
-
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include <Wire.h>
@@ -15,7 +11,6 @@
 
 
 // 创建u8g2对象
-#define _U8G2_CREATE U8G2_SSD1306_128X64_NONAME_F_HW_I2C
 _U8G2_CREATE u8g2(                             
         /*rotation*/U8G2_R0,
         /*reset*/ U8X8_PIN_NONE,
@@ -67,9 +62,9 @@ int32_t max(A a,B b){
     return a;
 }
 
-const static uint32_t itemHeight = _DISPLAY_ITEM_HEIGHT;           // 选项高度，推荐12
-const static uint32_t titleHeight = _DISPLAY_TITLE_HEIGHT;         // 标题高度，推荐16
-const static uint32_t maxItems =                                   // 最大同时出现选项数量
+constexpr static uint32_t itemHeight = _DISPLAY_ITEM_HEIGHT;           // 选项高度，推荐13
+constexpr static uint32_t titleHeight = _DISPLAY_TITLE_HEIGHT;         // 标题高度，推荐17
+const static uint32_t maxItems =                                       // 最大同时出现选项数量
     (u8g2.getHeight() - titleHeight + itemHeight - 1) / itemHeight + 1;
 
 static int32_t itemBias;                       // 用来计算选项整体显示偏移(向下为正),单位像素
@@ -95,11 +90,11 @@ bool printMenuItems(const menu& menu){
     uint32_t size = menu.size();
     cursorTargetWidth = u8g2.getUTF8Width(  // 计算光标宽度uint32_t size = menu.size();
         menu.itemTable[menu.cursor].name.c_str()) + 8;  
-    itemTargetBias = -menu.cursor*itemHeight + itemHeight;   // 默认位置在显示的第二个选项上
+    itemTargetBias = -menu.cursor*itemHeight + (u8g2.getHeight() - titleHeight)/3;   // 默认起始位置在屏幕的上大约三分之一位置
     if(itemTargetBias >= 0||size < maxItems){                // 如果第一个显示的选项在起始位置下 或者选项很少
         itemTargetBias = 0;                                  // 就设置第一项对齐顶部
     }else if(itemTargetBias + size*itemHeight < u8g2.getHeight() - cursorBeginCoorY){ // 如果最后一个显示的选项后有空隙
-        itemTargetBias = -size*itemHeight + (u8g2.getHeight() - cursorBeginCoorY);    // 就把选项下放到没有空隙
+        itemTargetBias = -size*itemHeight + (u8g2.getHeight() - cursorBeginCoorY) +1;    // 就把选项下放到没有空隙
     }
     cursorTargetBias = itemTargetBias + menu.cursor*itemHeight;
 
