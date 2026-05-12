@@ -15,7 +15,6 @@ class KeyboardClass{
         KeyboardClass();                    // 私有构造函数，禁止外部实例化
 
     public:
-        
         uint32_t getPressTime();                        // 获取按键按下时间，单位 毫秒
         KeyEvent getKey();                              // 获取当前按键事件掩码
         KeyEvent waitEvent(uint32_t delay = portMAX_DELAY); // 等待按键队列事件，等到就返回按键

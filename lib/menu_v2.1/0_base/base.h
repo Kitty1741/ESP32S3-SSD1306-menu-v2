@@ -6,7 +6,6 @@
 #include "./macro/get_time/get_time.h"
 #include "./macro/lengthof()/lengthof().h"
 #include "./macro/f_debug/debug.h"
-#include "./macro/pass/pass.h"
 
 //全局设置
 

@@ -4,6 +4,8 @@
 #include <U8g2lib.h>
 #include <Wire.h>
 
+#include "wifi/wifi.h"
+
 void test(){
     u8g2.clearDisplay();
     u8g2.drawUTF8X2(2,2,"世界你好");
@@ -16,34 +18,14 @@ void test(){
 menu mainMenu(
     "主菜单",{
         {"inner_menu",enterMenu(innerMenu)},
-        {"子菜单",newMenu(
-            "子菜单",{
-                {"1--"},
-                {"2------"},
-                {"3----------"},
-                {"4------"},
-                {"5--"},
-                {"6------"},
-                {"7----------"},
-                {"8------"},
-                {"9--"},
-                {"10-----"},
-                {"11---------"},
-                {"12-----"},
-                {"13-"},
-                {"14-----"},
-                {"15---------"},
-                {"16-----"},
-            }
-        )},
-        {"poweroff",[](){
+        {"wifiManager",enterMenu(wifiMenu)},
+        {"deep_sleep",[](){
             u8g2.clearDisplay();
+            esp_sleep_enable_ext0_wakeup((gpio_num_t)GPIO_KEY_F1, 0);
             esp_deep_sleep_start();
         }},
     }
 );
-
-
 
 void setup(){
     Serial.begin(115200);
