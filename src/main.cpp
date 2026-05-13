@@ -6,8 +6,8 @@
 
 menu mainMenu(
     "主菜单",{
-        //{"inner_menu",enterMenu(innerMenu)},
-        //{"WiFi",enterMenu(wifiMenu)},
+        {"inner_menu",enterMenu(innerMenu)},
+        {"WiFi",enterMenu(wifiMenu)},
         {"deep_sleep",[](){
             u8g2.clearDisplay();
             esp_sleep_enable_ext0_wakeup((gpio_num_t)GPIO_KEY_F1, 0);

@@ -21,9 +21,9 @@ void initKeyboard(){
 }
 
 // 键盘扫描函数 
-KeyEvent scanKeyboard(){
+keyEvent scanKeyboard(){
     __DEBUG_1("scanKeyboard()\n")
-    KeyEvent result = 0;
+    keyEvent result = 0;
     
     // 单独操作离散IO
     if(digitalRead(GPIO_KEY_F1   ) == LOW) result |= KEY_EVENT_F1;
@@ -41,9 +41,9 @@ KeyEvent scanKeyboard(){
 }
 
 //扫描函数，返回当前按键值
-KeyEvent scanKeyValue(){
+keyEvent scanKeyValue(){
     __DEBUG_1("scanKeyValue()\n")
-    KeyEvent result = scanKeyboard();
+    keyEvent result = scanKeyboard();
     return result;
 }
 

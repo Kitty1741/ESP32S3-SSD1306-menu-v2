@@ -28,6 +28,6 @@ typedef enum {
     KEY_EVENT_BACK  = KEY_EVENT_LEFT  | KEY_EVENT_B,    // 两个按键都能触发该事件
     KEY_EVENT_ENTER = KEY_EVENT_RIGHT | KEY_EVENT_A,
     
-}KeyEventEnum;
-typedef uint32_t KeyEvent; // 按键事件掩码
+}KEY_EVENT;
+typedef uint32_t keyEvent; // 按键事件掩码
 ```

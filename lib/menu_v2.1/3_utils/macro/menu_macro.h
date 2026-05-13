@@ -4,7 +4,7 @@
 // 用于兼容无名对象，可以快速创建菜单使用
 inline void menuLoop(menu Menu){
     __DEBUG_3("menuLoop()\n")
-    menuDisplayTask(&Menu);
+    menuLoopTask(&Menu);
 }
 
 // 由于创建多级菜单的代码过于丑陋，所以我写了这个

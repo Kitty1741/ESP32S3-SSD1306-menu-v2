@@ -10,14 +10,14 @@
 //键盘类定义
 class KeyboardClass{
     private:
-        KeyEvent key = KEY_EVENT_NONE;      // 记录扫描到的按键事件掩码
+        keyEvent key = KEY_EVENT_NONE;      // 记录扫描到的按键事件掩码
         uint32_t pressTime = 0;             // 按键按下时间戳，单位 毫秒
         KeyboardClass();                    // 私有构造函数，禁止外部实例化
 
     public:
         uint32_t getPressTime();                        // 获取按键按下时间，单位 毫秒
-        KeyEvent getKey();                              // 获取当前按键事件掩码
-        KeyEvent waitEvent(KeyEvent eventToWait,        // 等待按键队列事件，等到就返回按键
+        keyEvent getKey();                              // 获取当前按键事件掩码
+        keyEvent waitEvent(keyEvent eventToWait,        // 等待按键队列事件，等到就返回按键
             TickType_t delay=portMAX_DELAY); 
 
         friend KeyboardClass& initKeyboardClass();      // 初始化键盘实例

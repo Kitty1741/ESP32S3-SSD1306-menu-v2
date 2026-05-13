@@ -29,11 +29,11 @@ typedef enum {
     KEY_EVENT_BACK  = KEY_EVENT_LEFT  | KEY_EVENT_B,    // 两个按键都能触发该事件
     KEY_EVENT_ENTER = KEY_EVENT_RIGHT | KEY_EVENT_A,
     KEY_EVENT_ALL   = 0xffffffff,                       // 任意按键触发
-}KeyEventEnum;
-typedef uint32_t KeyEvent; // 按键事件掩码
+}KEY_EVENT;
+typedef uint32_t keyEvent; // 按键事件掩码
 
 
 void initKeyboard(); //初始化函数
-KeyEvent scanKeyValue(); // 键盘扫描函数 
+keyEvent scanKeyValue(); // 键盘扫描函数 
 
 #endif

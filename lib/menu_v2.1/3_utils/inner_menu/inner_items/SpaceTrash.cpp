@@ -1503,7 +1503,7 @@ static void spaceTrashGameLoop()
   extern _U8G2_CREATE u8g2;   // 使用项目全局u8g2
 
   int32_t player_y_pos = 128;
-  KeyEvent keyEvents;
+  keyEvent keyEvents;
   bool    game_running = true;
   bool    game_paused  = false;
   

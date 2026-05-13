@@ -9,7 +9,7 @@
 static StackType_t keyboardTaskStack[4096]; // 定义任务栈
 static StaticTask_t keyboardTaskBuffer; // 定义任务控制块
 
-uint8_t keyboardEventQueueStorage[1 * sizeof(KeyEvent)]; // 定义队列缓冲区
+uint8_t keyboardEventQueueStorage[1 * sizeof(keyEvent)]; // 定义队列缓冲区
 StaticQueue_t keyboardEventQueueBuffer; // 定义一个静态队列控制块
 
 // 定义一个队列句柄，用于发送按键事件
@@ -22,7 +22,7 @@ void refreshKey(void* no_param){
     while(1){
         __DEBUG_2("refreshKey()\n")
 
-        KeyEvent lastKey = Keyboard.key & ~KEY_EVENT_RELEASE;     // 上次是否有按键按下
+        keyEvent lastKey = Keyboard.key & ~KEY_EVENT_RELEASE;     // 上次是否有按键按下
 
         // 检测按键事件
         Keyboard.key = scanKeyValue();                      // 扫描获取按键
@@ -59,7 +59,7 @@ void initKeyboardTask(){  // 初始化键盘循环检测任务
     // 初始化按键队列
     keyboardEventQueue = xQueueCreateStatic(
         1,                 // 队列长度
-        sizeof(KeyEvent), // 每个元素大小
+        sizeof(keyEvent), // 每个元素大小
         keyboardEventQueueStorage, // 队列缓冲区
         &keyboardEventQueueBuffer  // 队列控制块
     ); 
@@ -116,29 +116,26 @@ uint32_t KeyboardClass::getPressTime(){
 }
 
 //返回当前按键事件掩码
-KeyEvent KeyboardClass::getKey(){
+keyEvent KeyboardClass::getKey(){
     __DEBUG_1("KeyboardClass::getKeyEvent()\n")
     return this -> key; 
 }
 
 // 等待按键事件，全阻塞
 // 参数为 要捕获的队列，最大等待时间
-KeyEvent KeyboardClass::waitEvent( KeyEvent eventToWait , TickType_t delay ){
+keyEvent KeyboardClass::waitEvent( keyEvent eventToWait , TickType_t delay ){
     __DEBUG_1("KeyboardClass::waitEventUntil()\n")
-    KeyEvent event = 0;
-    const KeyEvent none = KEY_EVENT_NONE;
+    keyEvent event = 0;
+    const keyEvent none = KEY_EVENT_NONE;
     const TickType_t t_0 = xTaskGetTickCount();
     TickType_t t = 0;
     while(1){
         t = xTaskGetTickCount();
-        if(!xQueuePeek(keyboardEventQueue, &event,               // 规定时间内没收到数据就返回
+        if(!xQueueReceive(keyboardEventQueue, &event,               // 规定时间内没收到数据就返回
             delay - (t - t_0) > 0 ? delay - (t - t_0) : 0 )){    // 防止负数
             break;
         }else if(event & eventToWait){      // 拿到数据后看看是不是自己要的
-            xQueueOverwrite(keyboardEventQueue, &none); // 拿到记得清空队列防止二次触发
             break;
-        }else{      // 如果不是再等2回合看看
-            vTaskDelay(pdMS_TO_TICKS(KEYBOARD_SCAN_INTERVAL*2));
         }
     }
     return event;

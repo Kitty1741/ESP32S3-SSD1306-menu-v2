@@ -140,6 +140,7 @@
 #include "config.h"
 #include "0_base/base.h"
 #include "1_modules/modules.h"
+#include "2_task/task.h"
 
 void chess_Init(u8g2_t *u8g, uint8_t body_color);
 
@@ -2323,12 +2324,10 @@ void runLittleRockChess(){
   lrc_obj.orientation = 0;
   chess_state = CHESS_STATE_MENU;
   bool game_exit = false;                          // 退出标志
-  KeyEvent keyEvent = 0;
-  KeyEvent prevKeyEvent = 0;
-  KeyEvent edge = 0;
+  keyEvent event = 0;
+  keyEvent prevKeyEvent = 0;
+  keyEvent key = 0;
   uint8_t keycode = 0;
-
-  while ( scanKeyValue() )vTaskDelay(20);
 
   while (!game_exit) {
     keycode = 0;
@@ -2339,15 +2338,16 @@ void runLittleRockChess(){
       chess_Draw();
     } while ( u8g2.nextPage() );
 
-    if (edge) {
-      // 将 KeyEvent 映射为 CHESS_KEY_* 命令
-      if (edge & KEY_EVENT_DOWN || edge & KEY_EVENT_RIGHT) {
+    key = kb.waitEvent(KEY_EVENT_ALL, 1000);   // 案件更新
+    if (key & KEY_EVENT_FIRST_PRESS) {
+      // 将 keyEvent 映射为 CHESS_KEY_* 命令
+      if (key & KEY_EVENT_DOWN || key & KEY_EVENT_RIGHT) {
         keycode = CHESS_KEY_NEXT;
-      } else if (edge & KEY_EVENT_UP || edge & KEY_EVENT_LEFT) {
+      } else if (key & KEY_EVENT_UP || key & KEY_EVENT_LEFT) {
         keycode = CHESS_KEY_PREV;
-      } else if (edge & KEY_EVENT_A) {    // A: 执行光标对象操作
+      } else if (key & KEY_EVENT_A) {    // A: 执行光标对象操作
         keycode = CHESS_KEY_SELECT;
-      } else if (edge & KEY_EVENT_B) {    // B: 取消操作/返回/退出
+      } else if (key & KEY_EVENT_B) {    // B: 取消操作/返回/退出
         if (chess_state == CHESS_STATE_MENU) {       // 主界面退出
           game_exit = true;
         } else if (chess_state == CHESS_STATE_GAME_END) {    // 选择界面回到主界面
@@ -2365,11 +2365,5 @@ void runLittleRockChess(){
     if (keycode != 0 || chess_state == CHESS_STATE_THINKING) {
       chess_Step(keycode);
     }
-
-    keyEvent = scanKeyValue();              // 按键扫描（非阻塞）—— 读取的是当前按键电平状态
-    edge = keyEvent & ~prevKeyEvent;        // 上升沿检测：只处理从 0→1 的按键事件（按下瞬间触发一次）
-    prevKeyEvent = keyEvent;
-
-    vTaskDelay(pdMS_TO_TICKS(50));  // FreeRTOS 延时，避免任务空转
   }
 }

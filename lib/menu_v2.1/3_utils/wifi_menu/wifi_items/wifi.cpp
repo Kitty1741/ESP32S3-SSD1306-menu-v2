@@ -111,7 +111,7 @@ void setWifiManually(){
 void wifiConnectFunc(String ssid,int32_t rssi,int32_t encryptionType){
 
     char buffer[32];        // 用来缓存转换的数据，方便改动
-    KeyEvent Key = 0;       // 用于存储键值
+    keyEvent Key = 0;       // 用于存储键值
 
     // 显示信息
     u8g2.clearBuffer();
@@ -192,8 +192,8 @@ void wifiConnectFunc(String ssid,int32_t rssi,int32_t encryptionType){
         }
         u8g2.sendBuffer();
 
-        Key = Keyboard.waitEvent(KEY_EVENT_FIRST_PRESS);    // 按下任意按键退出
-        return;
+        Key = Keyboard.waitEvent(KEY_EVENT_FIRST_PRESS, pdMS_TO_TICKS(200));    // 按下任意按键退出
+        if(Key & KEY_EVENT_BACK) return;
     }
 }
 

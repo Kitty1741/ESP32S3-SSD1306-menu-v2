@@ -7,9 +7,9 @@
 #include "1_modules/modules.h"
 #include "2_task/keyboard/keyboard.h"
 
-#include "menuDisplay.h"
+#include "menuLoop.h"
 
-uint32_t displayInterval = 1000/_DISPLAY_FPS; // 显示间隔，单位ms
+uint32_t displayInterval = 1000/_DISPLAY_FPS; // 显示刷新间隔，单位ms
 
 extern QueueHandle_t keyboardEventQueue; // 键盘事件队列
 TaskHandle_t menuDisplayTaskHandle = NULL; // 菜单显示任务句柄
@@ -28,8 +28,8 @@ void initMenuDisplayTask(menu& mainMenu){
     } else priority=1;     // 依旧防空
 
     xTaskCreate(
-        menuDisplayTask,
-        "menuDisplayTask",
+        menuLoopTask,
+        "menuLoopTask",
         8192,
         mainMenuPtr,
         priority,
@@ -38,11 +38,10 @@ void initMenuDisplayTask(menu& mainMenu){
 }
 
 // 菜单计算&显示任务
-void menuDisplayTask(void* menuPtr){
-    __DEBUG_2("menuDisplayTask()\n")
+void menuLoopTask(void* menuPtr){
+    __DEBUG_2("menuLoopTask()\n")
     menu& Menu = *(menu*)menuPtr;
-    KeyEvent key = 0;                       // 缓存按键事件用
-    KeyEvent keyBuffer = 0;                 // 用来融合按键事件
+    keyEvent key = 0;                       // 缓存按键事件用
     uint32_t& cursor = Menu.cursor;         // 菜单光标引用
     TickType_t lastWakeTime = 0;            // 上次任务唤醒时间，用于控制帧数
     TickType_t lastLPTime = xTaskGetTickCount(); // 上次响应长按改变菜单位置的时间，用于控制长按改变位置的速度,LP = longPress
@@ -53,11 +52,8 @@ void menuDisplayTask(void* menuPtr){
     while(1){
         lastWakeTime = xTaskGetTickCount(); // 开始计时
 
-        // 捕捉按键队列
-        key = 0;
-        while(xQueueReceive( keyboardEventQueue , &keyBuffer , 0 )){
-            key |= keyBuffer;   // 由于按键实在多，一个个看不过来，所以干脆全融了
-        }
+        // 捕捉按键
+        key = kb.waitEvent(KEY_EVENT_ALL, 0);
         if(key & KEY_EVENT_LONG_PRESS ){// 如果是长按导致的
             if(lastLPTime + LPInterval > lastWakeTime){ // 如果时间间隔不够久就不响应
                 goto KEY_ACT_END; 
@@ -78,7 +74,7 @@ void menuDisplayTask(void* menuPtr){
             if(&Menu != mainMenuPtr)break; // 检测是否退无可退，防止任务意外结束
         } 
         if( key & (KEY_EVENT_ENTER) ){                 // 执行run()
-            resetU8g2Setting(); // 初始化显示设置
+            resetU8g2Setting(); // 初始化，确保显示区域正常，同时防止多线程问题
             Menu.runItem();
             resetU8g2Setting(); // 防止有人改显示设置
         }
