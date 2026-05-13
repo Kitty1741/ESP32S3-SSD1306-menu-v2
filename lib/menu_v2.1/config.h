@@ -43,10 +43,14 @@
 #define  KEYBOARD_LONG_PRESS_THRESHOLD  750          // 长按事件阈值，单位 毫秒
 #define  KEYBOARD_LONG_LONG_PRESS_THRESHOLD 2000     // 超级长按事件阈值，单位 毫秒
 // menuDisplay
-#define  LONG_PRESS_ACT_INTERVAL 90                  // 菜单中长按方向键后，光标的连续移动间隔
-#define  _DISPLAY_FPS 30                             // 显示帧数上限
+#define  LONG_PRESS_ACT_INTERVAL 90                  // 菜单中长按方向键后，光标的连续移动间隔，单位 毫秒
+#define  _DISPLAY_FPS 30                             // 显示帧数上限,FPS
 
 
 // ----------------   3_utils   ----------------
+// inner_menu
+#define ENABLE_INNER_MENU 1     // 是否启用inner_menu，如果不需要这里面的功能可以设为0加速编译
+// wifi_menu
+#define ENABLE_WIFI_MENU  1     // 同上
 
 #endif

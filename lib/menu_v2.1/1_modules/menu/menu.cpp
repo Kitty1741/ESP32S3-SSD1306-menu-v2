@@ -18,7 +18,7 @@ void menu::runItem(){
     __DEBUG_1("menu::runItem()\n")
     menuItem* item = &this->itemTable[this->cursor];
     if(item->run != nullptr)
-    item->run();
+        item->run();
 }     
 
 // 返回菜单长度                    

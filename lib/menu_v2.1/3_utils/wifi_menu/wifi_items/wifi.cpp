@@ -1,32 +1,66 @@
+#include "config.h"
+#if ENABLE_WIFI_MENU
+
 #include <Arduino.h>
-#include <menuv2.h>
-#include <wifiManager.h>
 #include <WiFi.h>
 #include <string.h>
 
-#include "wifi.h"
+#include "0_base/base.h"
+#include "1_modules/modules.h"
+#include "2_task/task.h"
+#include "3_utils/init/init.h"
+#include "3_utils/macro/macro.h"
 
-WiFiManager wf;
-menu wifiMenu(
-    "WiFi",{
-        {"当前网络",wifiStatus},
-        {"AP配网",[](){wf.autoConnect("ESP32-S3-user1741");}},
-        {"手动连接",setWifiManually},
-    }
-);
+#include "wifi_items.h"
 
 // 时钟
 void wifiClock(){
 
 }
 
-// 查看当前网络状况
-void wifiStatus(){
-    newMenu(
-        "测试",{
-            {"A"},
+// 查看当前网络信息
+void wifiStatus() {
+    // 连接状态的基本信息
+    String ssid       = "SSID: "        + WiFi.SSID();
+    String bssid      = "BSSID: "       + WiFi.BSSIDstr();
+    String channel    = "信道: "        + String(WiFi.channel());
+    String rssi       = "信号: "        + String(WiFi.RSSI()) + " dBm";
+    String statusStr  = "状态: "        + String(WiFi.status() == WL_CONNECTED ? "已连接" : "未连接");
+
+    // 所有 IP 地址
+    String localIP    = "本机IP:"       + WiFi.localIP().toString();
+    String subnetMask = "掩码:"         + WiFi.subnetMask().toString();
+    String gateway    = "网关: "        + WiFi.gatewayIP().toString();
+    String dns0       = "首选DNS:"      + WiFi.dnsIP(0).toString();
+    String dns1       = "备用DNS:"      + WiFi.dnsIP(1).toString();   // 可能为 0.0.0.0
+
+    // MAC 地址（紧跟在 IP 块后面）
+    String staMac     = "设备MAC:"      + WiFi.macAddress();
+    String apMac      = "路由MAC:"      + WiFi.BSSIDstr();   // 与 BSSID 相同，但放这里和 STA MAC 配对
+
+    menu wifiStatusMenu(
+        "WiFi信息",
+        {
+            {ssid.c_str()},
+            {statusStr.c_str()},
+            {rssi.c_str()},
+
+            {""},
+            {channel.c_str()},
+            {bssid.c_str()},
+            {""},
+            {localIP.c_str()},
+            {subnetMask.c_str()},
+            {gateway.c_str()},
+            {dns0.c_str()},
+            {dns1.c_str()},
+            {""},
+            {staMac.c_str()},
+            {apMac.c_str()},
         }
     );
+
+    menuLoop(wifiStatusMenu);
 }
 
 // 手动连接网络
@@ -100,12 +134,12 @@ void wifiConnectFunc(String ssid,int32_t rssi,int32_t encryptionType){
     }   u8g2.drawUTF8(4,30,buffer);
     u8g2.drawUTF8(2,48,"A连接   B/LEFT返回");
     u8g2.sendBuffer();
-    while(1){                                   // 按键检测
-        Key = Keyboard.waitEvent(portMAX_DELAY);
-        if(Key & KEY_EVENT_FIRSTPRESS){
-            if(Key & KEY_EVENT_A)break;             // A确认连接
-            if(Key & KEY_EVENT_BACK)return;         // B/LEFT返回
-        }
+
+    // 按键检测
+    while(1){
+        Key = kb.waitEvent(KEY_EVENT_FIRST_PRESS);
+        if(Key & KEY_EVENT_A)break;             // A确认连接
+        if(Key & KEY_EVENT_BACK)return;         // B/LEFT返回
     }
 
     // 输入密码
@@ -115,17 +149,15 @@ void wifiConnectFunc(String ssid,int32_t rssi,int32_t encryptionType){
     if(encryptionType != WIFI_AUTH_OPEN)        // 只有加密了才会进入
     while(1){
         // 按键检测
-        Key = Keyboard.waitEvent(portMAX_DELAY);
-        if(Key & KEY_EVENT_FIRSTPRESS || Key & KEY_EVENT_LONG_PRESS){
-            if(Key & KEY_EVENT_LONG_PRESS){vTaskDelay(pdMS_TO_TICKS(50));}
-            if(Key & KEY_EVENT_LEFT) {thisChar <= 32 ? thisChar = 32 : thisChar --;}   // 左右键选择密码
-            if(Key & KEY_EVENT_RIGHT){thisChar >= 126? thisChar = 126: thisChar ++;}
-            if(Key & KEY_EVENT_X)password.remove(                 // X退格
-                max((uint32_t)0,password.length() -1));
-            if(Key & KEY_EVENT_Y)password += thisChar;      // 短按Y输入一位
-            if(Key & KEY_EVENT_A)break;                     // 按A确认密码
-            if(Key & KEY_EVENT_B)return;                    // B返回
-        }
+        Key = kb.waitEvent(KEY_EVENT_FIRST_PRESS || Key & KEY_EVENT_LONG_PRESS);
+        if(Key & KEY_EVENT_LONG_PRESS){vTaskDelay(pdMS_TO_TICKS(50));}
+        if(Key & KEY_EVENT_LEFT) {thisChar <= 32 ? thisChar = 32 : thisChar --;}   // 左右键选择密码
+        if(Key & KEY_EVENT_RIGHT){thisChar >= 126? thisChar = 126: thisChar ++;}
+        if(Key & KEY_EVENT_X)password.remove(                 // X退格
+            max((uint32_t)0,password.length() -1));
+        if(Key & KEY_EVENT_Y)password += thisChar;      // 短按Y输入一位
+        if(Key & KEY_EVENT_A)break;                     // 按A确认密码
+        if(Key & KEY_EVENT_B)return;                    // B返回
 
         // 显示
         u8g2.clearBuffer();
@@ -160,9 +192,9 @@ void wifiConnectFunc(String ssid,int32_t rssi,int32_t encryptionType){
         }
         u8g2.sendBuffer();
 
-        Key = Keyboard.waitEvent(500);
-        if(Key & KEY_EVENT_FIRSTPRESS){
-            if(Key & KEY_EVENT_BACK) {return;}   // 左右键选择密码
-        }
+        Key = Keyboard.waitEvent(KEY_EVENT_FIRST_PRESS);    // 按下任意按键退出
+        return;
     }
 }
+
+#endif

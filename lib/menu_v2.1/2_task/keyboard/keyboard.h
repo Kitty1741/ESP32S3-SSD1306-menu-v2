@@ -17,8 +17,8 @@ class KeyboardClass{
     public:
         uint32_t getPressTime();                        // 获取按键按下时间，单位 毫秒
         KeyEvent getKey();                              // 获取当前按键事件掩码
-        KeyEvent waitEvent(uint32_t delay = portMAX_DELAY); // 等待按键队列事件，等到就返回按键
-        bool ifKeyEvent(KeyEvent event);                // 判断是否发生了指定的按键事件
+        KeyEvent waitEvent(KeyEvent eventToWait,        // 等待按键队列事件，等到就返回按键
+            TickType_t delay=portMAX_DELAY); 
 
         friend KeyboardClass& initKeyboardClass();      // 初始化键盘实例
         friend void refreshKey(void* no_param);         // rtos更新按键函数

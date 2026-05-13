@@ -22,7 +22,7 @@ void refreshKey(void* no_param){
     while(1){
         __DEBUG_2("refreshKey()\n")
 
-        KeyEvent lastKey = Keyboard.key & ~KEY_EVENT_UNPRESS;     // 上次是否有按键按下
+        KeyEvent lastKey = Keyboard.key & ~KEY_EVENT_RELEASE;     // 上次是否有按键按下
 
         // 检测按键事件
         Keyboard.key = scanKeyValue();                      // 扫描获取按键
@@ -37,17 +37,17 @@ void refreshKey(void* no_param){
                 Keyboard.key |= KEY_EVENT_LONG_LONG_PRESS;
             }
             if( !lastKey ){              // 如果上次没按按键而这次按了，则是首次按下
-                Keyboard.key |= KEY_EVENT_FIRSTPRESS;
+                Keyboard.key |= KEY_EVENT_FIRST_PRESS;
             }
         }else{
             Keyboard.pressTime = 0;
             if( lastKey ){ //如果上次有按键按下但这次没有，说明发生了释放事件，此时发送事件到队列
-                Keyboard.key |= KEY_EVENT_UNPRESS;
+                Keyboard.key |= KEY_EVENT_RELEASE;
             }
         }
 
         if( Keyboard.key & ~0x03ff ){   // 特殊标志位但凡有动静就发
-            xQueueSend(keyboardEventQueue, &Keyboard.key, portMAX_DELAY);
+            xQueueOverwrite(keyboardEventQueue, &Keyboard.key);
         }
 
         vTaskDelay(pdMS_TO_TICKS(KEYBOARD_SCAN_INTERVAL)); //延时
@@ -105,30 +105,41 @@ KeyboardClass& initKeyboardClass(){
     return Keyboard;
 }
 KeyboardClass &Keyboard = initKeyboardClass(); // 定义一个全局键盘对象
+KeyboardClass &kb = Keyboard;                  // 为了代码简洁创建缩写引用作为别名
 
 KeyboardClass::KeyboardClass(){} // 私有构造函数，禁止外部实例化
 
 //获取按键按下时间，单位 毫秒
 uint32_t KeyboardClass::getPressTime(){
-    __DEBUG_1("Keyboard::getPressTime()\n")
+    __DEBUG_1("KeyboardClass::getPressTime()\n")
     return pressTime; 
 }
 
 //返回当前按键事件掩码
 KeyEvent KeyboardClass::getKey(){
-    __DEBUG_1("Keyboard::getKeyEvent()\n")
+    __DEBUG_1("KeyboardClass::getKeyEvent()\n")
     return this -> key; 
 }
 
-//判断按键事件是否发生
-bool KeyboardClass::ifKeyEvent(KeyEvent event){
-    __DEBUG_1("Keyboard::ifKeyEvent()\n")
-    return this->key & event == event;
-}
-
-// 从队列获取按键事件，阻塞
-KeyEvent KeyboardClass::waitEvent( uint32_t delay ){
-    KeyEvent event;
-    xQueueReceive(keyboardEventQueue,&event,delay);
+// 等待按键事件，全阻塞
+// 参数为 要捕获的队列，最大等待时间
+KeyEvent KeyboardClass::waitEvent( KeyEvent eventToWait , TickType_t delay ){
+    __DEBUG_1("KeyboardClass::waitEventUntil()\n")
+    KeyEvent event = 0;
+    const KeyEvent none = KEY_EVENT_NONE;
+    const TickType_t t_0 = xTaskGetTickCount();
+    TickType_t t = 0;
+    while(1){
+        t = xTaskGetTickCount();
+        if(!xQueuePeek(keyboardEventQueue, &event,               // 规定时间内没收到数据就返回
+            delay - (t - t_0) > 0 ? delay - (t - t_0) : 0 )){    // 防止负数
+            break;
+        }else if(event & eventToWait){      // 拿到数据后看看是不是自己要的
+            xQueueOverwrite(keyboardEventQueue, &none); // 拿到记得清空队列防止二次触发
+            break;
+        }else{      // 如果不是再等2回合看看
+            vTaskDelay(pdMS_TO_TICKS(KEYBOARD_SCAN_INTERVAL*2));
+        }
+    }
     return event;
 }

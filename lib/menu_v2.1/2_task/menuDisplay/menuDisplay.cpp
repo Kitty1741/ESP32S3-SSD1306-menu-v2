@@ -64,7 +64,7 @@ void menuDisplayTask(void* menuPtr){
             }else{                                      // 间隔够久就响应并刷新间隔
                 lastLPTime = lastWakeTime;
             }
-        }else if(!(key & KEY_EVENT_FIRSTPRESS)){          // 如果又不是长按又不是第一次按下就滚
+        }else if(!(key & KEY_EVENT_FIRST_PRESS)){          // 如果又不是长按又不是第一次按下就滚
             goto KEY_ACT_END;
         }
         

@@ -1,3 +1,6 @@
+#include "config.h"
+#if ENABLE_INNER_MENU
+
 #include <Arduino.h>
 
 #include "config.h"
@@ -12,6 +15,9 @@
 
 menu innerMenu(
     "内置菜单",{
-        {"SpaceTrash",runSpaceTrash}
+        {"SpaceTrash",runSpaceTrash},
+        {"LittleRookChess",runLittleRockChess},
     }
 );
+
+#endif
